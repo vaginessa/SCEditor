@@ -1874,6 +1874,7 @@
 			}
 
 			SCEditor.dom.removeWhiteSpace($body[0]);
+			SCEditor.dom.mergeSiblings($body[0]);
 			bbcode = base.elementToBbcode($body);
 
 			if ($tmpContainer) {

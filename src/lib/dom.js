@@ -1,8 +1,8 @@
 define(function (require) {
 	'use strict';
 
-	var $       = require('jquery');
-	var browser = require('./browser');
+	var $      = require('jquery');
+	var IE_VER = require('./browser').ie;
 
 	var _propertyNameCache = {};
 
@@ -52,7 +52,7 @@ define(function (require) {
 		 * @see traverse
 		 */
 		rTraverse: function (node, func, innermostFirst, siblingsOnly) {
-			this.traverse(node, func, innermostFirst, siblingsOnly, true);
+			dom.traverse(node, func, innermostFirst, siblingsOnly, true);
 		},
 
 		/**
@@ -112,10 +112,10 @@ define(function (require) {
 
 				// IE < 8 returns all possible attribtues instead of just
 				// the specified ones so have to check it is specified.
-				if (!browser.ie || attr.specified) {
+				if (!IE_VER || attr.specified) {
 					// IE < 8 doesn't return the CSS for the style attribute
 					// so must copy it manually
-					if (browser.ie < 8 && /style/i.test(attr.name)) {
+					if (IE_VER < 8 && /style/i.test(attr.name)) {
 						dom.copyCSS(oldElm, newElm);
 					} else {
 						newElm.setAttribute(attr.name, attr.value);
@@ -491,6 +491,86 @@ define(function (require) {
 
 			return !values || styleValue === values ||
 				($.isArray(values) && $.inArray(styleValue, values) > -1);
+		},
+
+		/**
+		 * Merges identical inline nodes with each other.
+		 *
+		 * @param {Node} root
+		 */
+		mergeSiblings: function (root) {
+			var node = root.firstChild;
+
+			while (node) {
+				var next = node.nextSibling;
+
+				if (node.nodeType === 1 && dom.isInline(node, true) && next &&
+						!$(node).is('br') && dom.isIdentical(node, next)) {
+					while (next.firstChild) {
+						node.appendChild(next.firstChild);
+					}
+
+					node.parentNode.removeChild(next);
+
+					// Re-check this node again incase the next sibling can
+					// also be merged into this one.
+					continue;
+				}
+
+				dom.mergeSiblings(node);
+
+				node = next;
+			}
+		},
+
+		/**
+		 * Checks if two nodes are of the same type and
+		 * have the same attributes.
+		 *
+		 * This doesn't check if they have identical children.
+		 *
+		 * @param  {Node}  nodeA
+		 * @param  {Node}  nodeB
+		 * @return {Boolean}
+		 */
+		isIdentical: function (nodeA, nodeB) {
+			var attrsA = nodeA.attributes;
+			var attrsB = nodeB.attributes;
+
+			// The _moz_dirty attribute is automatically added and should
+			// have no effect on if the nodes are identical
+			$([attrsA, attrsB]).removeAttr('_moz_dirty');
+
+			if (nodeA.nodeName !== nodeB.nodeName) {
+				return false;
+			}
+
+			// 1 = element
+			if (nodeA === nodeB || nodeA.nodeType !== 1) {
+				return true;
+			}
+
+			if (attrsA.length !== attrsB.length) {
+				return false;
+			}
+
+			for (var i = 0; i < attrsA.length; i++) {
+				var attr = attrsA[i];
+
+				// IE < 8 doesn't return the CSS for the style attribute
+				// so must check via CSS text
+				if (IE_VER < 8 && /style/i.test(attr.name) &&
+						attrsA.style.cssText !== attrsB.style.cssText) {
+					return false;
+				// IE < 8 returns all possible attribtues instead of just
+				// the specified ones so have to check it is specified.
+				} else if ((!IE_VER || attr.specified) &&
+						attr.value !== nodeB.getAttribute(attr.name)) {
+					return false;
+				}
+			}
+
+			return true;
 		}
 	};
 
