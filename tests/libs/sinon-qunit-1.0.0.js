@@ -22,15 +22,10 @@ sinon.config = {
 	useFakeServer: false
 };
 
-(function (global) {
+(function () {
 	var qTest = QUnit.test;
 
-	QUnit.test = global.test = function (testName, expected, callback, async) {
-		if (arguments.length === 2) {
-			callback = expected;
-			expected = null;
-		}
-
-		return qTest(testName, expected, sinon.test(callback), async);
+	QUnit.test = function (testName, callback) {
+		return qTest(testName, sinon.test(callback));
 	};
-}(this));
+}());

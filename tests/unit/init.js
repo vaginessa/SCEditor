@@ -31,17 +31,13 @@
 		};
 	});
 
-
-	// Don't start until requireJS has loaded the tests
-	QUnit.config.autostart = false;
-	QUnit.config.reorder = false;
-
+// TODO: look into instabul proxy while at it
 
 	// Add moduleSetup and moduleTeardown properties to the
 	// modules settings and add support for a module fixture
 	// div#qunit-module-fixture
-	var oldModule = window.module;
-	window.module = function (name, settings) {
+	var oldModule = QUnit.module;
+	QUnit.module = function (name, settings) {
 		settings = settings || {};
 
 		if (settings.moduleSetup) {
@@ -66,29 +62,4 @@
 
 		oldModule(name, settings);
 	};
-
-
-	define('jquery', [], function () {
-		return jQuery;
-	});
-
-	define('rangy', [], function () {
-		return rangy;
-	});
-
-	define('qunit', [], function () {
-		return QUnit;
-	});
-
-	require.config({
-		baseUrl: '../../src',
-		paths: {
-			'tests': '../tests',
-			'domReady': '../tests/libs/domReady-2.0.1'
-		},
-		shim: {
-			'plugins/bbcode': ['jquery.sceditor'],
-			'plugins/xhtml': ['jquery.sceditor']
-		}
-	});
 }());

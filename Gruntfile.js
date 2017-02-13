@@ -1,8 +1,12 @@
 /*global module:false, require:false, process:false*/
 module.exports = (grunt) => {
-	'use strict';
-
 	require('time-grunt')(grunt);
+
+	grunt.registerTask('dev-server', 'Dev server', function () {
+		var done = this.async();
+
+		require('./tests/dev-server').create().then(done, done);
+	});
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
@@ -41,28 +45,23 @@ module.exports = (grunt) => {
 
 		// Runs the unit tests
 		qunit: {
-			all: ['tests/unit/index.html']
+			all: {
+				options: {
+					urls: ['http://localhost:9000/tests/unit/index.html']
+				}
+			}
 		},
 
 		// Style checking of JS code using ESLint
 		eslint: {
 			source: {
-				src: ['src/**/*.js'],
-				options: {
-					configFile: '.eslintrc.json'
-				}
+				src: ['src/**/*.js']
 			},
 			tests: {
-				src: ['tests/**/*.js', '!tests/libs/**/*.js'],
-				options: {
-					configFile: 'tests/.eslintrc.json'
-				}
+				src: ['tests/**/*.js', '!tests/libs/**/*.js']
 			},
 			translations: {
-				src: 'languages/**/*.js',
-				options: {
-					configFile: 'languages/.eslintrc.json'
-				}
+				src: 'languages/**/*.js'
 			}
 		},
 
@@ -383,7 +382,7 @@ module.exports = (grunt) => {
 	grunt.registerTask('sauce', ['connect', 'saucelabs-qunit']);
 
 	// Lints the JS and runs the unit tests
-	grunt.registerTask('test', ['eslint', 'qunit']);
+	grunt.registerTask('test', ['eslint', 'dev-server', 'qunit']);
 
 	// Lints JS, runs unit tests and then runs unit tests via Sauce Labs.
 	grunt.registerTask('full-test', ['test', 'sauce']);
@@ -421,7 +420,7 @@ module.exports = (grunt) => {
 		'webpack:dist',
 		'concat:dist',
 		'copy:dist',
-		'less:dist',
+		'less:dist'
 	]);
 
 	// Update dev dependencies
