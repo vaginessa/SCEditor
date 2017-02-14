@@ -11,30 +11,22 @@ module.exports = (grunt) => {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 
-		// Used for Sauce Labs. Creates a server for the
-		// unit tests to be served from.
-		connect: {
-			server: {
-				options: {
-					port: 9999,
-					hostname: '*'
-				}
-			}
-		},
-
 		// Runs the QUnit unit tests in multiple browsers automatically.
 		'saucelabs-qunit': {
 			all: {
 				options: {
 					username: 'sceditor',
 					key: () => process.env.SCEDITOR_SAUCE_KEY,
-					urls: ['http://127.0.0.1:9999/tests/unit/index.html'],
-					tunnelTimeout: 5,
+					urls: [
+						'http://localhost:9000/tests/unit/index.html?hidepassed'
+					],
+					tunnelTimeout: 10,
+					tunnelArgs: ['--direct-domains', 'www.sceditor.com'],
 					build: process.env.TRAVIS_JOB_ID ||
 						('Local ' + (new Date()).toISOString()),
 					concurrency: 5,
 					browsers: grunt.file.readJSON('browsers.json'),
-					'max-duration': 120,
+					'max-duration': 60,
 					sauceConfig: {
 						'video-upload-on-pass': false
 					},
@@ -363,7 +355,6 @@ module.exports = (grunt) => {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-less');
@@ -379,7 +370,7 @@ module.exports = (grunt) => {
 	grunt.registerTask('default', ['test']);
 
 	// Sauce Labs. Runs the QUnit tests in multiple browsers automatically.
-	grunt.registerTask('sauce', ['connect', 'saucelabs-qunit']);
+	grunt.registerTask('sauce', ['dev-server', 'saucelabs-qunit']);
 
 	// Lints the JS and runs the unit tests
 	grunt.registerTask('test', ['eslint', 'dev-server', 'qunit']);

@@ -13,8 +13,7 @@ exports.create = function () {
 					'webpack-dev-server/client?http://localhost:9000'
 				],
 				unit: [
-					'./tests/unit/index.js',
-					'webpack-dev-server/client?http://localhost:9000'
+					'./tests/unit/index.js'
 				]
 			},
 			output: {
