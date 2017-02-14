@@ -21,11 +21,3 @@ sinon.config = {
 	useFakeTimers: true,
 	useFakeServer: false
 };
-
-(function () {
-	var qTest = QUnit.test;
-
-	QUnit.test = function (testName, callback) {
-		return qTest(testName, sinon.test(callback));
-	};
-}());
