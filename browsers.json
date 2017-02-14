@@ -51,40 +51,11 @@
 
 
 	{
-		"platform": "OS X 10.10",
+		"platform": "OS X 10.12",
 		"browserName": "safari",
-		"version": "8"
-	},
-	{
-		"platform": "OS X 10.9",
-		"browserName": "safari",
-		"version": "7"
-	},
-	{
-		"platform": "OS X 10.8",
-		"browserName": "safari",
-		"version": "6"
+		"version": "10"
 	},
 
-
-	{
-		"platform": "Linux",
-		"browserName": "android",
-		"deviceName": "Android",
-		"version": "5.0"
-	},
-	{
-		"platform": "Linux",
-		"browserName": "android",
-		"deviceName": "Android",
-		"version": "4.4"
-	},
-	{
-		"platform": "Linux",
-		"browserName": "android",
-		"deviceName": "Android",
-		"version": "4.0"
-	},
 
 
 	{
@@ -92,11 +63,5 @@
 		"browserName": "iphone",
 		"deviceName": "iPhone",
 		"version": "9.3"
-	},
-	{
-		"platform": "OS X 10.9",
-		"browserName": "iphone",
-		"deviceName": "iPhone",
-		"version": "8.1"
 	}
 ]
