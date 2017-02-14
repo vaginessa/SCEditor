@@ -102,7 +102,7 @@ QUnit.test('autofocus', function (assert) {
 
 	var iframe = sceditor.getContentAreaContainer().get(0);
 	var body   = sceditor.getBody().get(0);
-	var sel    = rangy.getSelection(iframe);
+	var sel    = rangy.getIframeSelection(iframe);
 
 	assert.ok(sel.rangeCount, 'At elast 1 range exists');
 
@@ -125,7 +125,7 @@ QUnit.test('autofocusEnd', function (assert) {
 
 	var iframe = sceditor.getContentAreaContainer().get(0);
 	var body   = sceditor.getBody().get(0);
-	var sel    = rangy.getSelection(iframe);
+	var sel    = rangy.getIframeSelection(iframe);
 
 	assert.ok(sel.rangeCount, 'At elast 1 range exists');
 
@@ -238,7 +238,7 @@ QUnit.test('wysiwygEditorInsertHtml()', function (assert) {
 	var iframe = sceditor.getContentAreaContainer().get(0);
 	var body   = sceditor.getBody().get(0);
 	var range  = rangy.createRange(body.ownerDocument);
-	var sel    = rangy.getSelection(iframe);
+	var sel    = rangy.getIframeSelection(iframe);
 
 	range.setStart(body.firstChild.firstChild, 10);
 	range.setEnd(body.firstChild.firstChild, 10);
@@ -264,7 +264,7 @@ QUnit.test('wysiwygEditorInsertHtml() - Start and end', function (assert) {
 	var iframe = sceditor.getContentAreaContainer().get(0);
 	var body   = sceditor.getBody().get(0);
 	var range  = rangy.createRange(body.ownerDocument);
-	var sel    = rangy.getSelection(iframe);
+	var sel    = rangy.getIframeSelection(iframe);
 
 	range.setStart(body.firstChild.firstChild, 10);
 	range.setEnd(body.firstChild.firstChild, 15);
@@ -291,7 +291,7 @@ QUnit.test('wysiwygEditorInsertText() - Start and end', function (assert) {
 	var iframe = sceditor.getContentAreaContainer().get(0);
 	var body   = sceditor.getBody().get(0);
 	var range  = rangy.createRange(body.ownerDocument);
-	var sel    = rangy.getSelection(iframe);
+	var sel    = rangy.getIframeSelection(iframe);
 
 	range.setStart(body.firstChild.firstChild, 10);
 	range.setEnd(body.firstChild.firstChild, 10);
@@ -317,7 +317,7 @@ QUnit.test('wysiwygEditorInsertText() - Start and end', function (assert) {
 	var iframe = sceditor.getContentAreaContainer().get(0);
 	var body   = sceditor.getBody().get(0);
 	var range  = rangy.createRange(body.ownerDocument);
-	var sel    = rangy.getSelection(iframe);
+	var sel    = rangy.getIframeSelection(iframe);
 
 	range.setStart(body.firstChild.firstChild, 10);
 	range.setEnd(body.firstChild.firstChild, 15);
@@ -356,8 +356,6 @@ QUnit.test('wysiwygEditorInsertHtml()', function (assert) {
 });
 
 QUnit.test('sourceEditorInsertText() - Start and end', function (assert) {
-	var sourceEditor = $('.sceditor-container textarea').get(0);
-
 	sceditor.sourceMode(true);
 	sceditor.val('<p>The quick brown fox jumps ' +
 		'over the lazy dog.<br /></p>');
@@ -369,7 +367,7 @@ QUnit.test('sourceEditorInsertText() - Start and end', function (assert) {
 	sceditor.sourceEditorInsertText('|');
 
 	assert.htmlEqual(
-		sourceEditor.value,
+		sceditor.val(),
 		'<p>The quick "brown|" fox jumps over the lazy dog.<br /></p>'
 	);
 });
@@ -422,8 +420,9 @@ QUnit.test('getSourceEditorValue()', function (assert) {
 		sceditor.getSourceEditorValue(false),
 		'<p>The quick brown fox jumps over the lazy dog.<br /></p>'
 	);
+});
 
-
+QUnit.test('getSourceEditorValue() - Uses plugins', function (assert) {
 	reloadEditor({
 		plugins: 'test'
 	});
