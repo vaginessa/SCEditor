@@ -2228,21 +2228,21 @@ export default function SCEditor(el, options) {
 	 * @memberOf jQuery.sceditor.prototype
 	 */
 	base.toggleSourceMode = function () {
-		var sourceMode = base.inSourceMode();
+		var isInSourceMode = base.inSourceMode();
 
 		// don't allow switching to WYSIWYG if doesn't support it
-		if (!browser.isWysiwygSupported && sourceMode) {
+		if (!browser.isWysiwygSupported && isInSourceMode) {
 			return;
 		}
 
-		if (!sourceMode) {
+		if (!isInSourceMode) {
 			rangeHelper.saveRange();
 			rangeHelper.clear();
 		}
 
 		base.blur();
 
-		if (sourceMode) {
+		if (isInSourceMode) {
 			base.setWysiwygEditorValue(base.getSourceEditorValue());
 		} else {
 			base.setSourceEditorValue(base.getWysiwygEditorValue());
@@ -2250,10 +2250,23 @@ export default function SCEditor(el, options) {
 
 		lastRange = null;
 		$sourceEditor.toggle();
+
+		// Fixes IE9 unspecified error. Not sure why it
+		// is being triggered but this fixes it.
+		if (!isInSourceMode) {
+			sourceEditor.focus();
+		}
+
 		$wysiwygEditor.toggle();
+
+		// Undo the previous IE 9 fix
+		if (!isInSourceMode) {
+			sourceEditor.blur();
+		}
+
 		$editorContainer
-			.toggleClass('wysiwygMode', sourceMode)
-			.toggleClass('sourceMode', !sourceMode);
+			.toggleClass('wysiwygMode', isInSourceMode)
+			.toggleClass('sourceMode', !isInSourceMode);
 
 		updateToolBar();
 		updateActiveButtons();
