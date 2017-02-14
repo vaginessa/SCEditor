@@ -675,26 +675,17 @@ QUnit.test('Image', function (assert) {
 
 QUnit.test('Image dimensions when loaded', function (assert) {
 	var done = assert.async();
-	var finished = false;
 	var plugin = this.plugin;
 	var div = utils.htmlToDiv(
 		'<img src="http://www.sceditor.com/emoticons/smile.png" ' +
 			'width="200" />'
 	);
 
-	var loaded = function () {
-		if (finished) {
+	var checkLoaded = function () {
+		if (!div.firstChild.complete || div.firstChild.naturalWidth === 0) {
+			setTimeout(checkLoaded, 100);
 			return;
 		}
-
-		// IE < 9 fires loaded before the image is complete
-		// so must check
-		if (!div.firstChild.complete) {
-			setTimeout(loaded, 100);
-			return;
-		}
-
-		finished = true;
 
 		assert.equal(
 			plugin.signalToSource('', $(div)),
@@ -704,11 +695,7 @@ QUnit.test('Image dimensions when loaded', function (assert) {
 		done();
 	};
 
-	if (!div.firstChild.complete) {
-		div.firstChild.onload = loaded;
-	}
-
-	loaded();
+	checkLoaded();
 });
 
 
