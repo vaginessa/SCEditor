@@ -4,9 +4,10 @@ const WebpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
 const path = require('path');
 
-exports.create = function () {
+// TODO: make coverage optional and accept port
+exports.create = function (port, coverage) {
 	return new Promise(function (resolve, reject) {
-		const compiler = webpack({
+		const webpackOptions = {
 			entry: {
 				main: [
 					'./src/jquery.sceditor.js',
@@ -14,6 +15,18 @@ exports.create = function () {
 				],
 				unit: [
 					'./tests/unit/index.js'
+				]
+			},
+			module: {
+				rules: [
+					{
+						test: /\.js$/,
+						include: path.resolve('src/'),
+						loader: 'istanbul-instrumenter-loader',
+						options: {
+							esModules: true
+						}
+					}
 				]
 			},
 			output: {
@@ -34,9 +47,16 @@ exports.create = function () {
 				jquery: 'jQuery',
 				rangy: 'rangy'
 			},
-			devtool: 'eval-source-map'
-		});
+			devtool: 'cheap-module-inline-source-map'
+		};
 
+		if (!coverage) {
+			// webpackOptions.module = {};
+		}
+
+		const compiler = webpack(webpackOptions);
+
+		// Resolve promise when bundle generated
 		compiler.plugin('done', resolve);
 
 		/* eslint no-new: off */
@@ -44,7 +64,7 @@ exports.create = function () {
 			contentBase: path.join(__dirname, '..'),
 			compress: true,
 			publicPath: '/webpack-server/'
-		}).listen(9000, 'localhost', function (err) {
+		}).listen(port, 'localhost', function (err) {
 			if (err) {
 				reject(err);
 			}
@@ -53,5 +73,5 @@ exports.create = function () {
 };
 
 if (require.main === module) {
-	exports.create();
+	exports.create(9000, false);
 }

@@ -1,11 +1,26 @@
 /*global module:false, require:false, process:false*/
 module.exports = (grunt) => {
 	require('time-grunt')(grunt);
+	const istanbul = require('istanbul');
+
+	grunt.event.on('qunit.coverage', function (data) {
+		const Report = istanbul.Report;
+		const Collector = istanbul.Collector;
+		const collector = new Collector();
+
+		collector.add(data);
+
+		console.log('\n\n\nCoverage:');
+		Report.create('text').writeReport(collector, true);
+		Report.create('html', {
+			dir: './coverage/html'
+		}).writeReport(collector, true);
+	});
 
 	grunt.registerTask('dev-server', 'Dev server', function () {
-		var done = this.async();
+		const done = this.async();
 
-		require('./tests/dev-server').create().then(done, done);
+		require('./tests/dev-server').create(9001, true).then(done, done);
 	});
 
 	grunt.initConfig({
@@ -18,7 +33,7 @@ module.exports = (grunt) => {
 					username: 'sceditor',
 					key: () => process.env.SCEDITOR_SAUCE_KEY,
 					urls: [
-						'http://localhost:9000/tests/unit/index.html?hidepassed'
+						'http://localhost:9001/tests/unit/index.html?hidepassed'
 					],
 					tunnelTimeout: 10,
 					tunnelArgs: ['--direct-domains', 'www.sceditor.com'],
@@ -39,7 +54,7 @@ module.exports = (grunt) => {
 		qunit: {
 			all: {
 				options: {
-					urls: ['http://localhost:9000/tests/unit/index.html']
+					urls: ['http://localhost:9001/tests/unit/index.html']
 				}
 			}
 		},

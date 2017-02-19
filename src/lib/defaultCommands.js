@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import * as dom from './dom.js';
 import { ie as IE_VER } from './browser.js';
 import _tmpl from './templates.js';
 
@@ -37,7 +36,7 @@ function fixFirefoxListBug(editor) {
 			if (node.nodeType === 3 && /[\n\r\t]+/.test(node.nodeValue)) {
 				// Only remove if newlines are collapsed
 				if (!/^pre/.test($(node.parentNode).css('white-space'))) {
-					dom.remove(node);
+					$(node).remove();
 				}
 			}
 

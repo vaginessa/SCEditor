@@ -18,8 +18,14 @@
 
 		testResults.tests = tests;
 
+		// For SauceLabs
 		// eslint-disable-next-line dot-notation
 		window['global_test_results'] = testResults;
+
+		// Send istanbul coverage to grunt
+		if ('_phantom' in window && window.__coverage__) {
+			alert(JSON.stringify(['qunit.coverage', window.__coverage__]));
+		}
 	});
 
 	QUnit.testStart(function (testDetails) {
