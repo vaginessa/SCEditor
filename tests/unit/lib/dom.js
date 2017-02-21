@@ -67,10 +67,10 @@ QUnit.test('parseHTML()', function (assert) {
 		'<span>span<div style="font-weight: bold;">div</div>span</span>'
 	);
 
-	assert.ok($.isArray(result));
-	assert.equal(result.length, 1);
+	assert.equal(result.nodeType, dom.DOCUMENT_FRAGMENT_NODE);
+	assert.equal(result.childNodes.length, 1);
 	assert.nodesEqual(
-		result[0],
+		result.firstChild,
 		utils.htmlToNode(
 			'<span>span<div style="font-weight: bold;">div</div>span</span>'
 		)
@@ -82,8 +82,8 @@ QUnit.test('parseHTML() - Parse multiple', function (assert) {
 		'<span>one</span><span>two</span><span>three</span>'
 	);
 
-	assert.ok($.isArray(result));
-	assert.equal(result.length, 3);
+	assert.equal(result.nodeType, dom.DOCUMENT_FRAGMENT_NODE);
+	assert.equal(result.childNodes.length, 3);
 });
 
 

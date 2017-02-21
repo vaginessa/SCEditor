@@ -605,7 +605,7 @@
 		/**
 		 * Converts the WYSIWYG content to XHTML
 		 * @param  {String} html
-		 * @param  {Node} domBody
+		 * @param  {HTMLElement} domBody
 		 * @return {String}
 		 * @memberOf jQuery.sceditor.plugins.xhtml.prototype
 		 */

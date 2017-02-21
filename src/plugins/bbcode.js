@@ -1825,15 +1825,15 @@
 		 *
 		 * @param {String}	html   Html string, this function ignores this,
 		 *                         it works off domBody
-		 * @param {jQuery}	$body  Editors dom body object to convert
+		 * @param {HTMLElement}	$body  Editors dom body object to convert
 		 * @return {String} BBCode which has been converted from HTML
 		 * @memberOf jQuery.plugins.bbcode.prototype
 		 */
-		base.signalToSource = function (html, $body) {
-			var	$tmpContainer, bbcode,
+		base.signalToSource = function (html, body) {
+			var	$tmpContainer, bbcode, $body,
 				parser = new BBCodeParser(base.opts.parserOptions);
 
-			if (!$body) {
+			if (!body) {
 				if (typeof html === 'string') {
 					$tmpContainer = $('<div />')
 						.css('visibility', 'hidden')
@@ -1844,6 +1844,8 @@
 				} else {
 					$body = $(html);
 				}
+			} else {
+				$body = $(body);
 			}
 
 			if (!$body || !$body.jquery) {

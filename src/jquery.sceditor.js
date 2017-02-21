@@ -112,6 +112,7 @@ $.fn.sceditor = function (options) {
 		} else if (!instance) {
 			/*eslint no-new: off*/
 			(new SCEditor(this, options));
+			$this.data('sceditor', this._sceditor);
 		}
 	});
 

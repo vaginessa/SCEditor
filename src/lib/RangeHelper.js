@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 import * as dom from './dom.js';
 import * as escape from './escape.js';
 import { ie as IE_VER } from './browser.js';
@@ -106,12 +104,12 @@ export default function RangeHelper(win, d) {
 			html += base.selectedHtml() + endHTML;
 		}
 
-		div           = doc.createElement('p');
+		div           = dom.createElement('p', {}, doc);
 		node          = doc.createDocumentFragment();
 		div.innerHTML = html;
 
 		while (div.firstChild) {
-			node.appendChild(div.firstChild);
+			dom.appendChild(node, div.firstChild);
 		}
 
 		base.insertNode(node);
@@ -129,27 +127,25 @@ export default function RangeHelper(win, d) {
 	 * @private
 	 */
 	_prepareInput = function (node, endNode, returnHtml) {
-		var lastChild, $lastChild,
-			div  = doc.createElement('div'),
-			$div = $(div);
+		var lastChild,
+			frag = doc.createDocumentFragment();
 
 		if (typeof node === 'string') {
 			if (endNode) {
 				node += base.selectedHtml() + endNode;
 			}
 
-			$div.html(node);
+			frag = dom.parseHTML(node);
 		} else {
-			$div.append(node);
+			dom.appendChild(frag, node);
 
 			if (endNode) {
-				$div
-					.append(base.selectedRange().extractContents())
-					.append(endNode);
+				dom.appendChild(frag, base.selectedRange().extractContents());
+				dom.appendChild(frag, endNode);
 			}
 		}
 
-		if (!(lastChild = div.lastChild)) {
+		if (!(lastChild = frag.lastChild)) {
 			return;
 		}
 
@@ -158,28 +154,30 @@ export default function RangeHelper(win, d) {
 		}
 
 		if (dom.canHaveChildren(lastChild)) {
-			$lastChild = $(lastChild);
-
 			// IE <= 8 and Webkit won't allow the cursor to be placed
 			// inside an empty tag, so add a zero width space to it.
 			if (!lastChild.lastChild) {
-				$lastChild.append('\u200B');
+				dom.appendChild(lastChild, document.createTextNode('\u200B'));
 			}
+		} else {
+			lastChild = frag;
 		}
 
 		base.removeMarkers();
 
 		// Append marks to last child so when restored cursor will be in
 		// the right place
-		($lastChild || $div)
-			.append(_createMarker(startMarker))
-			.append(_createMarker(endMarker));
+		dom.appendChild(lastChild, _createMarker(startMarker));
+		dom.appendChild(lastChild, _createMarker(endMarker));
 
 		if (returnHtml) {
-			return $div.html();
+			var div = dom.createElement('div');
+			dom.appendChild(div, frag);
+
+			return div.innerHTML;
 		}
 
-		return $(doc.createDocumentFragment()).append($div.contents())[0];
+		return frag;
 	};
 
 	/**
@@ -211,9 +209,8 @@ export default function RangeHelper(win, d) {
 		// into <br /> will cause it not to be displayed so must
 		// insert before the <br /> in FF.
 		// 3 = TextNode
-		if (parent && parent.nodeType !== 3 &&
-			!dom.canHaveChildren(parent)) {
-			parent.parentNode.insertBefore(input, parent);
+		if (parent && parent.nodeType !== 3 && !dom.canHaveChildren(parent)) {
+			dom.insertBefore(input, parent);
 		} else {
 			range.insertNode(input);
 		}
@@ -310,8 +307,8 @@ export default function RangeHelper(win, d) {
 			range = base.selectedRange();
 
 		if (range) {
-			div = doc.createElement('p');
-			div.appendChild(range.cloneContents());
+			div = dom.createElement('p', {}, doc);
+			dom.appendChild(div, range.cloneContents());
 
 			return div.innerHTML;
 		}
@@ -331,9 +328,7 @@ export default function RangeHelper(win, d) {
 		var range = base.selectedRange();
 
 		if (range) {
-			return range.parentElement ?
-				range.parentElement() :
-				range.commonAncestorContainer;
+			return range.commonAncestorContainer;
 		}
 	};
 
@@ -406,12 +401,13 @@ export default function RangeHelper(win, d) {
 	_createMarker = function (id) {
 		base.removeMarker(id);
 
-		var marker              = doc.createElement('span');
-		marker.id               = id;
-		marker.style.lineHeight = '0';
-		marker.style.display    = 'none';
-		marker.className        = 'sceditor-selection sceditor-ignore';
-		marker.innerHTML        = ' ';
+		var marker  = dom.createElement('span', {
+			id: id,
+			className: 'sceditor-selection sceditor-ignore',
+			style: 'display:none;line-height:0'
+		}, doc);
+
+		marker.innerHTML = ' ';
 
 		return marker;
 	};
@@ -427,13 +423,16 @@ export default function RangeHelper(win, d) {
 	 */
 	base.insertMarkers = function () {
 		var	currentRange = base.selectedRange();
+		var startNode = _createMarker(startMarker);
 
-		base.insertNodeAt(true, _createMarker(startMarker));
+		base.removeMarkers();
+		base.insertNodeAt(true, startNode);
 
 		// Fixes issue with end marker sometimes being placed before
 		// the start marker when the range is collapsed.
 		if (currentRange && currentRange.collapsed) {
-			$(base.getMarker(startMarker)).after(_createMarker(endMarker));
+			startNode.parentNode.insertBefore(
+				_createMarker(endMarker), startNode.nextSibling);
 		} else {
 			base.insertNodeAt(false, _createMarker(endMarker));
 		}
@@ -464,7 +463,7 @@ export default function RangeHelper(win, d) {
 		var marker = base.getMarker(id);
 
 		if (marker) {
-			marker.parentNode.removeChild(marker);
+			dom.remove(marker);
 		}
 	};
 
@@ -511,11 +510,11 @@ export default function RangeHelper(win, d) {
 			!dom.isInline(container, true)) {
 
 			lastChild = container.lastChild;
-			while (lastChild && $(lastChild).is('.sceditor-ignore')) {
+			while (lastChild && dom.is(lastChild, '.sceditor-ignore')) {
 				lastChild = lastChild.previousSibling;
 			}
 
-			if ($(lastChild).is('br')) {
+			if (dom.is(lastChild, 'br')) {
 				var rng = doc.createRange();
 				rng.setEndAfter(lastChild);
 				rng.collapse(false);

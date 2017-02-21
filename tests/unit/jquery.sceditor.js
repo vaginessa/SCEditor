@@ -1,7 +1,7 @@
 import 'src/jquery.sceditor.js';
 
 var textarea;
-var $sceditor;
+var sceditor;
 
 QUnit.module('jquery.sceditor', {
 	beforeEach: function () {
@@ -13,7 +13,7 @@ QUnit.module('jquery.sceditor', {
 		fixture.appendChild(textarea);
 
 		$(textarea).sceditor();
-		$sceditor = $(textarea).data('sceditor');
+		sceditor = $(textarea).data('sceditor');
 	},
 	afterEach: function () {
 		$.sceditor.defaultOptions.emoticonsRoot = '';
@@ -21,6 +21,10 @@ QUnit.module('jquery.sceditor', {
 });
 
 
+QUnit.test('data(\'sceditor\')', function (assert) {
+	assert.ok($(textarea).data('sceditor') === sceditor);
+});
+
 QUnit.test('sceditor(\'instance\')', function (assert) {
-	assert.ok($(textarea).sceditor('instance') === $sceditor);
+	assert.ok($(textarea).sceditor('instance') === sceditor);
 });

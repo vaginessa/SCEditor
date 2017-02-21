@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import { createElement } from './dom.js';
 
 var USER_AGENT = navigator.userAgent;
 
@@ -19,7 +19,7 @@ export var ie = (function () {
 	var	undef,
 		v   = 3,
 		doc = document,
-		div = doc.createElement('div'),
+		div = createElement('div'),
 		all = div.getElementsByTagName('i');
 
 	do {
@@ -61,11 +61,13 @@ export var ios = /iPhone|iPod|iPad| wosbrowser\//i.test(USER_AGENT);
  * @return {Boolean}
  */
 export var isWysiwygSupported = (function () {
-	var	match, isUnsupported, undef,
-		editableAttr = $('<p contenteditable="true">')[0].contentEditable;
+	var	match, isUnsupported;
 
-	// Check if the contenteditable attribute is supported
-	if (editableAttr === undef || editableAttr === 'inherit') {
+	var div = createElement('div', { contentEditable: true });
+
+	// Check if the contentEditable attribute is supported
+	if (!('contentEditable' in document.documentElement) ||
+		div.contentEditable !== 'true') {
 		return false;
 	}
 

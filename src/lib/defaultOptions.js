@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import { attr } from './dom';
 
 /**
  * Default options for SCEditor
@@ -62,7 +62,7 @@ export default {
 	 * The locale to use.
 	 * @type {String}
 	 */
-	locale: $('html').attr('lang') || 'en',
+	locale: attr(document.documentElement, 'lang') || 'en',
 
 	/**
 	 * The Charset to use
