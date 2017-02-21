@@ -57,6 +57,13 @@
 	},
 
 
+	{
+		"platform": "Linux",
+		"browserName": "android",
+		"deviceName": "Android",
+		"version": "5.0"
+	},
+
 
 	{
 		"platform": "OS X 10.11",
