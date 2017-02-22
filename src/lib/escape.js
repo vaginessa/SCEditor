@@ -12,8 +12,8 @@ var VALID_SCHEME_REGEX =
 /**
  * Escapes a string so it's safe to use in regex
  *
- * @param {String} str
- * @return {String}
+ * @param {string} str
+ * @return {string}
  * @name regex
  */
 export function regex(str) {
@@ -26,9 +26,9 @@ export function regex(str) {
  * If noQuotes is set to false, all single and double
  * quotes will also be escaped
  *
- * @param {String} str
- * @param {Boolean} [noQuotes=false]
- * @return {String}
+ * @param {string} str
+ * @param {boolean} [noQuotes=false]
+ * @return {string}
  * @name entities
  * @since 1.4.1
  */
@@ -81,8 +81,8 @@ export function entities(str, noQuotes) {
  * **IMPORTANT**: This does not escape any HTML in a url, for
  * that use the escape.entities() method.
  *
- * @param  {String} url
- * @return {String}
+ * @param  {string} url
+ * @return {string}
  * @name escapeUriScheme
  * @memberOf jQuery.sceditor
  * @since 1.4.5

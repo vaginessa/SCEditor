@@ -98,9 +98,9 @@ var _templates = {
  * conaining the parsed template.
  *
  * @param {string} name
- * @param {Object} params
- * @param {Boolean} createHtml
- * @returns {String|DocumentFragment}
+ * @param {Object} [params]
+ * @param {boolean} [createHtml]
+ * @returns {string|DocumentFragment}
  * @private
  */
 export default function (name, params, createHtml) {

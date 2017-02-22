@@ -2,7 +2,7 @@
  * SCEditor
  * http://www.sceditor.com/
  *
- * Copyright (C) 2014, Sam Clarke (samclarke.com)
+ * Copyright (C) 2017, Sam Clarke (samclarke.com)
  *
  * SCEditor is licensed under the MIT license:
  *	http://www.opensource.org/licenses/mit-license.php
@@ -82,7 +82,7 @@ SCEditor.plugins       = PluginManager.plugins;
  *
  * @param  {Object|String} options Should either be an Object of options or
  *                                 the strings "state" or "instance"
- * @return {this|Array|jQuery.sceditor|Bool}
+ * @return {this|Array|SCEditor|Bool}
  */
 $.fn.sceditor = function (options) {
 	var	$this, instance,

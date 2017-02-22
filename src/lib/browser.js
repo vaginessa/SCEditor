@@ -13,7 +13,7 @@ var USER_AGENT = navigator.userAgent;
  *
  * @function
  * @name ie
- * @type {int}
+ * @type {number}
  */
 export var ie = (function () {
 	var	undef,
@@ -42,14 +42,14 @@ export var ie = (function () {
 export var edge = '-ms-ime-align' in document.documentElement.style;
 
 /**
- * <p>Detects if the browser is iOS</p>
+ * Detects if the browser is iOS
  *
- * <p>Needed to fix iOS specific bugs/</p>
+ * Needed to fix iOS specific bugs
  *
  * @function
  * @name ios
  * @memberOf jQuery.sceditor
- * @type {Boolean}
+ * @type {boolean}
  */
 export var ios = /iPhone|iPod|iPad| wosbrowser\//i.test(USER_AGENT);
 
@@ -58,7 +58,7 @@ export var ios = /iPhone|iPod|iPad| wosbrowser\//i.test(USER_AGENT);
  *
  * @function
  * @name isWysiwygSupported
- * @return {Boolean}
+ * @return {boolean}
  */
 export var isWysiwygSupported = (function () {
 	var	match, isUnsupported;

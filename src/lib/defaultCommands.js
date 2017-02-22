@@ -13,7 +13,7 @@ var IE_BR_FIX = IE_VER && IE_VER < 11;
  * See issue #359
  */
 function fixFirefoxListBug(editor) {
-	// Only apply to firefox as will break other browsers.
+	// Only apply to Firefox as will break other browsers.
 	if ('mozHidden' in document) {
 		var node = editor.getBody()[0];
 		var next;

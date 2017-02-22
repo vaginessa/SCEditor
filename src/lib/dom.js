@@ -1,6 +1,10 @@
 import * as utils from './utils.js';
 
-var _propertyNameCache = {};
+/**
+ * Cache of camelCase CSS property names
+ * @type {Object<string, string>}
+ */
+var cssPropertyNameCache = {};
 
 /**
  * Node type constant for element nodes
@@ -22,7 +26,19 @@ export var TEXT_NODE = 3;
  * @type {number}
  */
 export var COMMENT_NODE = 8;
+
+/**
+ * Node type document nodes
+ *
+ * @type {number}
+ */
 export var DOCUMENT_NODE = 9;
+
+/**
+ * Node type constant for document fragments
+ *
+ * @type {number}
+ */
 export var DOCUMENT_FRAGMENT_NODE = 11;
 
 function toFloat(value) {
@@ -75,7 +91,7 @@ export function parent(node, selector) {
  * returns the first matching node if any.
  *
  * @param {HTMLElement} node
- * @param {string} selector
+ * @param {!string} selector
  * @returns {HTMLElement|null}
  */
 export function closest(node, selector) {
@@ -132,6 +148,18 @@ export function off(node, events, fn, capture) {
 	});
 }
 
+/**
+ * If only attr param is specified it will get
+ * the value of the attr param.
+ *
+ * If value is specified but null the attribute
+ * will be removed otherwise the attr value will
+ * be set to the passed value.
+ *
+ * @param {!HTMLElement} node
+ * @param {!string} attr
+ * @param {?string} [value]
+ */
 export function attr(node, attr, value) {
 	if (arguments.length < 3) {
 		return node.getAttribute(attr);
@@ -145,14 +173,37 @@ export function attr(node, attr, value) {
 	}
 }
 
+/**
+ * @param {!HTMLElement} node
+ * @param {!string} attr
+ */
+export function removeAttr(node, attr) {
+	node.removeAttribute(attr);
+}
+
+/**
+ * Sets the passed elements display to none
+ *
+ * @param {!HTMLElement} node
+ */
 export function hide(node) {
 	css(node, 'display', 'none');
 }
 
+/**
+ * Sets the passed elements display to default
+ *
+ * @param {!HTMLElement} node
+ */
 export function show(node) {
 	css(node, 'display', '');
 }
 
+/**
+ * Toggles an elements visibility
+ *
+ * @param {!HTMLElement} node
+ */
 export function toggle(node) {
 	if (isVisible(node)) {
 		hide(node);
@@ -161,10 +212,12 @@ export function toggle(node) {
 	}
 }
 
-export function removeAttr(node, attr) {
-	node.removeAttribute(attr);
-}
-
+/**
+ * @param {!HTMLElement} node
+ * @param {!Object|string} rule
+ * @param {string|number} [value]
+ * @return {string|number|undefined}
+ */
 export function css(node, rule, value) {
 	if (arguments.length < 3) {
 		if (utils.isString(rule)) {
@@ -190,7 +243,7 @@ export function css(node, rule, value) {
  * @param {Node} node
  * @param {string} [key]
  * @param {string} [value]
- * @return {Object}
+ * @return {Object|undefined}
  */
 export function data(node, key, value) {
 	var argsLength = arguments.length;
@@ -218,7 +271,7 @@ export function data(node, key, value) {
 /**
  * Checks if node matches the given selector.
  *
- * @param {HTMLElement} node
+ * @param {?HTMLElement} node
  * @param {string} selector
  * @returns {boolean}
  */
@@ -235,7 +288,7 @@ export function is(node, selector) {
  * This differs from the DOM contains() method in that
  * if node and child are equal this will return false.
  *
- * @param {HTMLElement} node
+ * @param {!HTMLElement} node
  * @param {HTMLElement} child
  * @returns {boolean}
  */
@@ -243,6 +296,11 @@ export function contains(node, child) {
 	return node !== child && node.contains(child);
 }
 
+/**
+ * @param {Node} node
+ * @param {string} [selector]
+ * @returns {?HTMLElement}
+ */
 export function previousElementSibling(node, selector) {
 	var prev = node.previousElementSibling;
 
@@ -253,18 +311,36 @@ export function previousElementSibling(node, selector) {
 	return prev;
 }
 
+/**
+ * @param {!Node} node
+ * @param {!Node} refNode
+ * @returns {Node}
+ */
 export function insertBefore(node, refNode) {
 	return refNode.parentNode.insertBefore(node, refNode);
 }
 
+/**
+ * @param {?HTMLElement} node
+ * @returns {!Array.<string>}
+ */
 function classes(node) {
 	return node ? (node.className || '').trim().split(/\s+/) : [];
 }
 
+/**
+ * @param {?HTMLElement} node
+ * @param {string} className
+ * @returns {boolean}
+ */
 export function hasClass(node, className) {
 	return classes(node).indexOf(className) > -1;
 }
 
+/**
+ * @param {!HTMLElement} node
+ * @param {string} className
+ */
 export function addClass(node, className) {
 	var classList = classes(node);
 
@@ -275,6 +351,10 @@ export function addClass(node, className) {
 	node.className = classList.join(' ');
 }
 
+/**
+ * @param {!HTMLElement} node
+ * @param {string} className
+ */
 export function removeClass(node, className) {
 	var classList = classes(node);
 
@@ -283,6 +363,19 @@ export function removeClass(node, className) {
 	node.className = classList.join(' ');
 }
 
+/**
+ * Toggles a class on node.
+ *
+ * If state is specified and is truthy it will add
+ * the class.
+ *
+ * If state is specified and is falsey it will remove
+ * the class.
+ *
+ * @param {HTMLElement} node
+ * @param {string} className
+ * @param {boolean} [state]
+ */
 export function toggleClass(node, className, state) {
 	state = utils.isUndefined(state) ? hasClass(node, className) : state;
 
@@ -293,6 +386,13 @@ export function toggleClass(node, className, state) {
 	}
 }
 
+/**
+ * Gets or sets the width of the passed node.
+ *
+ * @param {HTMLElement} node
+ * @param {number|string} [value]
+ * @returns {number|undefined}
+ */
 export function width(node, value) {
 	if (utils.isUndefined(value)) {
 		var cs = getComputedStyle(node);
@@ -305,6 +405,13 @@ export function width(node, value) {
 	css(node, 'width', value);
 }
 
+/**
+ * Gets or sets the height of the passed node.
+ *
+ * @param {HTMLElement} node
+ * @param {number|string} [value]
+ * @returns {number|undefined}
+ */
 export function height(node, value) {
 	if (utils.isUndefined(value)) {
 		var cs = getComputedStyle(node);
@@ -317,6 +424,14 @@ export function height(node, value) {
 	css(node, 'height', value);
 }
 
+/**
+ * Triggers a custom event with the specified name and
+ * sets the detail property to the data object passed.
+ *
+ * @param {HTMLElement} node
+ * @param {string} eventName
+ * @param {Object} [eventName]
+ */
 export function trigger(node, eventName, data) {
 	var event;
 
@@ -344,6 +459,12 @@ export function isVisible(node) {
 	return !!node.getClientRects().length;
 }
 
+/**
+ * Convert CSS property names into camel case
+ *
+ * @param {string} string
+ * @returns {string}
+ */
 function camelCase(string) {
 	return string
 		.replace(/^-ms-/, 'ms-')
@@ -360,12 +481,12 @@ function camelCase(string) {
  * If the function returns false the loop will be exited.
  *
  * @param  {HTMLElement} node
- * @param  {Function} func       Callback which is called with every
- *                               child node as the first argument.
- * @param  {bool} innermostFirst If the innermost node should be passed
- *                               to the function before it's parents.
- * @param  {bool} siblingsOnly   If to only traverse the nodes siblings
- * @param  {bool} reverse        If to traverse the nodes in reverse
+ * @param  {Function} func           Callback which is called with every
+ *                                   child node as the first argument.
+ * @param  {boolean} innermostFirst  If the innermost node should be passed
+ *                                   to the function before it's parents.
+ * @param  {boolean} siblingsOnly    If to only traverse the nodes siblings
+ * @param  {boolean} [reverse=false] If to traverse the nodes in reverse
  */
 // eslint-disable-next-line max-params
 export function traverse(node, func, innermostFirst, siblingsOnly, reverse) {
@@ -402,9 +523,9 @@ export function rTraverse(node, func, innermostFirst, siblingsOnly) {
 }
 
 /**
- * Parses HTML
+ * Parses HTML into a document fragment
  *
- * @param {String} html
+ * @param {string} html
  * @param {Document} context
  * @since 1.4.4
  * @return {DocumentFragment}
@@ -431,7 +552,7 @@ export function parseHTML(html, context) {
  * if it has a class, style attribute or data.
  *
  * @param  {HTMLElement} elm
- * @return {Boolean}
+ * @return {boolean}
  * @since 1.4.4
  */
 export function hasStyling(node) {
@@ -445,7 +566,7 @@ export function hasStyling(node) {
  * For example it can convert the element <b> to <strong>
  *
  * @param  {HTMLElement} oldElm
- * @param  {String}      toTagName
+ * @param  {string}      toTagName
  * @return {HTMLElement}
  * @since 1.4.4
  */
@@ -453,7 +574,7 @@ export function convertElement(oldElm, toTagName) {
 	var	child, attribute,
 		oldAttrs = oldElm.attributes,
 		attrsIdx = oldAttrs.length,
-		newElm   = oldElm.ownerDocument.createElement(toTagName);
+		newElm   = createElement(toTagName, {}, oldElm.ownerDocument);
 
 	while (attrsIdx--) {
 		attribute = oldAttrs[attrsIdx];
@@ -477,6 +598,7 @@ export function convertElement(oldElm, toTagName) {
 
 /**
  * List of block level elements separated by bars (|)
+ *
  * @type {string}
  */
 export var blockLevelList = '|body|hr|p|div|h1|h2|h3|h4|h5|h6|address|pre|' +
@@ -486,7 +608,7 @@ export var blockLevelList = '|body|hr|p|div|h1|h2|h3|h4|h5|h6|address|pre|' +
  * List of elements that do not allow children separated by bars (|)
  *
  * @param {Node} node
- * @return {bool}
+ * @return {boolean}
  * @since  1.4.5
  */
 export function canHaveChildren(node) {
@@ -508,7 +630,9 @@ export function canHaveChildren(node) {
 /**
  * Checks if an element is inline
  *
- * @return {bool}
+ * @param {HTMLElement} elm
+ * @param {boolean} [includeCodeAsBlock=false]
+ * @return {boolean}
  */
 export function isInline(elm, includeCodeAsBlock) {
 	var tagName,
@@ -528,9 +652,9 @@ export function isInline(elm, includeCodeAsBlock) {
 }
 
 /**
- * <p>Copys the CSS from 1 node to another.</p>
+ * Copy the CSS from 1 node to another.
  *
- * <p>Only copies CSS defined on the element e.g. style attr.</p>
+ * Only copies CSS defined on the element e.g. style attr.
  *
  * @param {HTMLElement} from
  * @param {HTMLElement} to
@@ -595,7 +719,7 @@ export function fixNesting(node) {
  *
  * @param {HTMLElement} node1
  * @param {HTMLElement} node2
- * @return {HTMLElement}
+ * @return {?HTMLElement}
  */
 export function findCommonAncestor(node1, node2) {
 	// Not as fast as making two arrays of parents and comparing
@@ -611,6 +735,11 @@ export function findCommonAncestor(node1, node2) {
 	}
 }
 
+/**
+ * @param {?Node}
+ * @param {boolean} [previous=false]
+ * @returns {?Node}
+ */
 export function getSibling(node, previous) {
 	if (!node) {
 		return null;
@@ -621,19 +750,12 @@ export function getSibling(node, previous) {
 }
 
 /**
- * Removes unused whitespace from the root and all it's children
- *
- * @name removeWhiteSpace^1
- * @param {HTMLElement} root
- */
-/**
  * Removes unused whitespace from the root and all it's children.
  *
  * If preserveNewLines is true, new line characters will not be removed
  *
- * @name removeWhiteSpace^2
- * @param {HTMLElement} root
- * @param {boolean}     preserveNewLines
+ * @param {!HTMLElement} root
+ * @param {boolean}     [preserveNewLines]
  * @since 1.4.3
  */
 export function removeWhiteSpace(root, preserveNewLines) {
@@ -788,8 +910,8 @@ export function getOffset(node) {
  * Gets the value of a CSS property from the elements style attribute
  *
  * @param  {HTMLElement} elm
- * @param  {String} property
- * @return {String}
+ * @param  {string} property
+ * @return {string}
  */
 export function getStyle(elm, property) {
 	var	direction, styleValue,
@@ -799,11 +921,11 @@ export function getStyle(elm, property) {
 		return '';
 	}
 
-	if (!_propertyNameCache[property]) {
-		_propertyNameCache[property] = camelCase(property);
+	if (!cssPropertyNameCache[property]) {
+		cssPropertyNameCache[property] = camelCase(property);
 	}
 
-	property   = _propertyNameCache[property];
+	property   = cssPropertyNameCache[property];
 	styleValue = elmStyle[property];
 
 	// Add an exception for text-align
@@ -835,9 +957,9 @@ export function getStyle(elm, property) {
  * matches one of the values
  *
  * @param  {HTMLElement} elm
- * @param  {String} property
- * @param  {String|Array} values
- * @return {Boolean}
+ * @param  {string} property
+ * @param  {string|array} [values]
+ * @return {boolean}
  */
 export function hasStyle(elm, property, values) {
 	var styleValue = getStyle(elm, property);

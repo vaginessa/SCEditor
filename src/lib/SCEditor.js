@@ -24,8 +24,8 @@ var EMOTICONS_SELECTOR = 'img[data-sceditor-emoticon]';
  *
  * @param {Element} el The textarea to be converted
  * @return {Object} options
- * @class sceditor
- * @name sceditor
+ * @class SCEditor
+ * @name SCEditor
  */
 export default function SCEditor(el, options) {
 	/**
@@ -126,14 +126,14 @@ export default function SCEditor(el, options) {
 	 * Stores a cache of preloaded images
 	 *
 	 * @private
-	 * @type {Array}
+	 * @type {Array.<HTMLImageElement>}
 	 */
 	var preLoadCache = [];
 
 	/**
 	 * The editors rangeHelper instance
 	 *
-	 * @type {sceditor.rangeHelper}
+	 * @type {RangeHelper}
 	 * @private
 	 */
 	var rangeHelper;
@@ -149,7 +149,7 @@ export default function SCEditor(el, options) {
 	/**
 	 * An array of button state handlers
 	 *
-	 * @type {Array}
+	 * @type {Array.<Object>}
 	 * @private
 	 */
 	var btnStateHandlers = [];
@@ -192,7 +192,7 @@ export default function SCEditor(el, options) {
 	 *
 	 * Helps improve performance as it is checked a lot.
 	 *
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @private
 	 */
 	var isSelectionCheckPending;
@@ -200,7 +200,7 @@ export default function SCEditor(el, options) {
 	/**
 	 * If content is required (equivalent to the HTML5 required attribute)
 	 *
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @private
 	 */
 	var isRequired;
@@ -227,7 +227,7 @@ export default function SCEditor(el, options) {
 	 *
 	 * Only used or populated when emoticonsCompat is enabled.
 	 *
-	 * @type {NodeListOf<HTMLImageElement>}
+	 * @type {NodeList}
 	 * @private
 	 */
 	var currentEmoticons = [];
@@ -258,7 +258,7 @@ export default function SCEditor(el, options) {
 	/**
 	 * If the current autoUpdate action is canceled.
 	 *
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @private
 	 */
 	var autoUpdateCanceled;
@@ -328,7 +328,7 @@ export default function SCEditor(el, options) {
 	/**
 	 * All the commands supported by the editor
 	 * @name commands
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.commands = utils
 		.extend(true, {}, (options.commands || SCEditor.commands));
@@ -336,7 +336,7 @@ export default function SCEditor(el, options) {
 	/**
 	 * Options for this editor instance
 	 * @name opts
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.opts = options = utils.extend(
 		true, {}, SCEditor.defaultOptions, options
@@ -925,7 +925,7 @@ export default function SCEditor(el, options) {
 	 *
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name readOnly
 	 * @return {boolean}
 	 */
@@ -935,7 +935,7 @@ export default function SCEditor(el, options) {
 	 * @param {boolean} readOnly
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name readOnly^2
 	 * @return {this}
 	 */
@@ -957,9 +957,9 @@ export default function SCEditor(el, options) {
 	 *
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name rtl
-	 * @return {Boolean}
+	 * @return {boolean}
 	 */
 	/**
 	 * Sets if the editor is in RTL mode
@@ -967,7 +967,7 @@ export default function SCEditor(el, options) {
 	 * @param {boolean} rtl
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name rtl^2
 	 * @return {this}
 	 */
@@ -1007,17 +1007,17 @@ export default function SCEditor(el, options) {
 	 *
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name width
-	 * @return {int}
+	 * @return {number}
 	 */
 	/**
 	 * Sets the width of the editor
 	 *
-	 * @param {int} width Width in pixels
+	 * @param {number} width Width in pixels
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name width^2
 	 * @return {this}
 	 */
@@ -1027,11 +1027,11 @@ export default function SCEditor(el, options) {
 	 * The saveWidth specifies if to save the width. The stored width can be
 	 * used for things like restoring from maximized state.
 	 *
-	 * @param {int}     width            Width in pixels
+	 * @param {number}     width            Width in pixels
 	 * @param {boolean}	[saveWidth=true] If to store the width
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name width^3
 	 * @return {this}
 	 */
@@ -1051,7 +1051,7 @@ export default function SCEditor(el, options) {
 	 *
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name dimensions
 	 * @return {object}
 	 */
@@ -1060,11 +1060,11 @@ export default function SCEditor(el, options) {
 	 *
 	 * <p>If width or height is not numeric it is ignored.</p>
 	 *
-	 * @param {int}	width	Width in px
-	 * @param {int}	height	Height in px
+	 * @param {number}	width	Width in px
+	 * @param {number}	height	Height in px
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name dimensions^2
 	 * @return {this}
 	 */
@@ -1077,12 +1077,12 @@ export default function SCEditor(el, options) {
 	 * The saved sizes can be used for things like restoring from
 	 * maximized state. This should normally be left as true.</p>
 	 *
-	 * @param {int}		width		Width in px
-	 * @param {int}		height		Height in px
+	 * @param {number}		width		Width in px
+	 * @param {number}		height		Height in px
 	 * @param {boolean}	[save=true]	If to store the new sizes
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name dimensions^3
 	 * @return {this}
 	 */
@@ -1121,9 +1121,9 @@ export default function SCEditor(el, options) {
 	 *
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name updateStyleCache
-	 * @return {int}
+	 * @return {number}
 	 * @deprecated
 	 */
 	base.updateStyleCache = function () {};
@@ -1133,17 +1133,17 @@ export default function SCEditor(el, options) {
 	 *
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name height
-	 * @return {int}
+	 * @return {number}
 	 */
 	/**
 	 * Sets the height of the editor
 	 *
-	 * @param {int} height Height in px
+	 * @param {number} height Height in px
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name height^2
 	 * @return {this}
 	 */
@@ -1155,11 +1155,11 @@ export default function SCEditor(el, options) {
 	 * The stored height can be used for things like
 	 * restoring from maximized state.
 	 *
-	 * @param {int} height Height in px
+	 * @param {number} height Height in px
 	 * @param {boolean} [saveHeight=true] If to store the height
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name height^3
 	 * @return {this}
 	 */
@@ -1178,7 +1178,7 @@ export default function SCEditor(el, options) {
 	 *
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name maximize
 	 * @return {boolean}
 	 */
@@ -1188,7 +1188,7 @@ export default function SCEditor(el, options) {
 	 * @param {boolean} maximize If to maximise the editor
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @name maximize^2
 	 * @return {this}
 	 */
@@ -1233,10 +1233,10 @@ export default function SCEditor(el, options) {
 	 * higher than the maxHeight option.
 	 *
 	 * @since 1.3.5
-	 * @param {Boolean} [ignoreMaxHeight=false]
+	 * @param {boolean} [ignoreMaxHeight=false]
 	 * @function
 	 * @name expandToContent
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @see #resizeToContent
 	 */
 	base.expandToContent = function (ignoreMaxHeight) {
@@ -1279,7 +1279,7 @@ export default function SCEditor(el, options) {
 	 *
 	 * @function
 	 * @name destroy
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.destroy = function () {
 		// Don't destroy if the editor has already been destroyed
@@ -1330,7 +1330,7 @@ export default function SCEditor(el, options) {
 	 *                                editor
 	 * @function
 	 * @name createDropDown
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.createDropDown = function (menuItem, name, content, ieFix) {
 		// first click for create second click for close
@@ -1422,7 +1422,7 @@ export default function SCEditor(el, options) {
 		};
 
 		// Modern browsers with clipboard API - everything other than _very_
-		// old android web views and UC browseer which doesn't support the
+		// old android web views and UC browser which doesn't support the
 		// paste event at all.
 		if (clipboard && !isIeOrEdge) {
 			var data = {};
@@ -1525,7 +1525,7 @@ export default function SCEditor(el, options) {
 	 *                             after closing the drop down
 	 * @function
 	 * @name closeDropDown
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.closeDropDown = function (focus) {
 		if (dropdown) {
@@ -1557,11 +1557,11 @@ export default function SCEditor(el, options) {
 
 
 	/**
-	 * <p>Inserts HTML into WYSIWYG editor.</p>
+	 * Inserts HTML into WYSIWYG editor.
 	 *
-	 * <p>If endHtml is specified, any selected text will be placed
+	 * If endHtml is specified, any selected text will be placed
 	 * between html and endHtml. If there is no selected text html
-	 * and endHtml will just be concatenate together.</p>
+	 * and endHtml will just be concatenate together.
 	 *
 	 * @param {string} html
 	 * @param {string} [endHtml=null]
@@ -1571,7 +1571,7 @@ export default function SCEditor(el, options) {
 	 *                                               support text.
 	 * @function
 	 * @name wysiwygEditorInsertHtml
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.wysiwygEditorInsertHtml = function (
 		html, endHtml, overrideCodeBlocking
@@ -1620,11 +1620,11 @@ export default function SCEditor(el, options) {
 	 * Like wysiwygEditorInsertHtml except it will convert any HTML
 	 * into text before inserting it.
 	 *
-	 * @param {String} text
-	 * @param {String} [endText=null]
+	 * @param {string} text
+	 * @param {string} [endText=null]
 	 * @function
 	 * @name wysiwygEditorInsertText
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.wysiwygEditorInsertText = function (text, endText) {
 		base.wysiwygEditorInsertHtml(
@@ -1640,12 +1640,12 @@ export default function SCEditor(el, options) {
 	 * text and endText. If no text is selected text and endText will
 	 * just be concatenate together.
 	 *
-	 * @param {String} text
-	 * @param {String} [endText=null]
+	 * @param {string} text
+	 * @param {string} [endText=null]
 	 * @since 1.3.5
 	 * @function
 	 * @name insertText
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.insertText = function (text, endText) {
 		if (base.inSourceMode()) {
@@ -1674,12 +1674,12 @@ export default function SCEditor(el, options) {
 	 *
 	 * [b]Selected text|[/b]
 	 *
-	 * @param {String} text
-	 * @param {String} [endText=null]
+	 * @param {string} text
+	 * @param {string} [endText=null]
 	 * @since 1.4.0
 	 * @function
 	 * @name sourceEditorInsertText
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.sourceEditorInsertText = function (text, endText) {
 		var scrollTop, currentValue,
@@ -1712,10 +1712,10 @@ export default function SCEditor(el, options) {
 	 * Gets the current instance of the rangeHelper class
 	 * for the editor.
 	 *
-	 * @return sceditor.rangeHelper
+	 * @return {RangeHelper}
 	 * @function
 	 * @name getRangeHelper
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.getRangeHelper = function () {
 		return rangeHelper;
@@ -1729,7 +1729,7 @@ export default function SCEditor(el, options) {
 	 * @function
 	 * @since 1.4.5
 	 * @name sourceEditorCaret
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.sourceEditorCaret = function (position) {
 		var ret = {};
@@ -1760,22 +1760,22 @@ export default function SCEditor(el, options) {
 	 * @return {string}
 	 * @function
 	 * @name val
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	/**
-	 * <p>Sets the value of the editor.</p>
+	 * Sets the value of the editor.
 	 *
-	 * <p>If filter set true the val will be passed through the filter
+	 * If filter set true the val will be passed through the filter
 	 * function. If using the BBCode plugin it will pass the val to
-	 * the BBCode filter to convert any BBCode into HTML.</p>
+	 * the BBCode filter to convert any BBCode into HTML.
 	 *
-	 * @param {String} val
-	 * @param {Boolean} [filter=true]
+	 * @param {string} val
+	 * @param {boolean} [filter=true]
 	 * @return {this}
 	 * @since 1.3.5
 	 * @function
 	 * @name val^2
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.val = function (val, filter) {
 		if (!utils.isString(val)) {
@@ -1809,15 +1809,15 @@ export default function SCEditor(el, options) {
 	 * passed through any plugin filters. If using the BBCode plugin
 	 * this will convert any BBCode into HTML.
 	 *
-	 * @param {String} start
-	 * @param {String} [end=null]
-	 * @param {Boolean} [filter=true]
-	 * @param {Boolean} [convertEmoticons=true] If to convert emoticons
+	 * @param {string} start
+	 * @param {string} [end=null]
+	 * @param {boolean} [filter=true]
+	 * @param {boolean} [convertEmoticons=true] If to convert emoticons
 	 * @return {this}
 	 * @since 1.3.5
 	 * @function
 	 * @name insert
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	/**
 	 * Inserts HTML/BBCode into the editor
@@ -1833,16 +1833,16 @@ export default function SCEditor(el, options) {
 	 * If the allowMixed param is set to true, HTML any will not be
 	 * escaped
 	 *
-	 * @param {String} start
-	 * @param {String} [end=null]
-	 * @param {Boolean} [filter=true]
-	 * @param {Boolean} [convertEmoticons=true] If to convert emoticons
-	 * @param {Boolean} [allowMixed=false]
+	 * @param {string} start
+	 * @param {string} [end=null]
+	 * @param {boolean} [filter=true]
+	 * @param {boolean} [convertEmoticons=true] If to convert emoticons
+	 * @param {boolean} [allowMixed=false]
 	 * @return {this}
 	 * @since 1.4.3
 	 * @function
 	 * @name insert^2
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	// eslint-disable-next-line max-params
 	base.insert = function (
@@ -1898,7 +1898,7 @@ export default function SCEditor(el, options) {
 	 * @return {string}
 	 * @function
 	 * @name getWysiwygEditorValue
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.getWysiwygEditorValue = function (filter) {
 		var	html;
@@ -1933,7 +1933,7 @@ export default function SCEditor(el, options) {
 	 * @function
 	 * @since 1.4.3
 	 * @name getBody
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.getBody = function () {
 		return wysiwygBody;
@@ -1946,7 +1946,7 @@ export default function SCEditor(el, options) {
 	 * @function
 	 * @since 1.4.3
 	 * @name getContentAreaContainer
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.getContentAreaContainer = function () {
 		return wysiwygEditor;
@@ -1965,7 +1965,7 @@ export default function SCEditor(el, options) {
 	 * @function
 	 * @since 1.4.0
 	 * @name getSourceEditorValue
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.getSourceEditorValue = function (filter) {
 		var val = sourceEditor.value;
@@ -1984,7 +1984,7 @@ export default function SCEditor(el, options) {
 	 * @param {string} value
 	 * @function
 	 * @name setWysiwygEditorValue
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.setWysiwygEditorValue = function (value) {
 		if (!value) {
@@ -2005,7 +2005,7 @@ export default function SCEditor(el, options) {
 	 * @param {string} value
 	 * @function
 	 * @name setSourceEditorValue
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.setSourceEditorValue = function (value) {
 		sourceEditor.value = value;
@@ -2020,7 +2020,7 @@ export default function SCEditor(el, options) {
 	 * @function
 	 * @name updateOriginal
 	 * @since 1.4.0
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.updateOriginal = function () {
 		original.value = base.val();
@@ -2048,7 +2048,7 @@ export default function SCEditor(el, options) {
 				options.emoticons.hidden
 			);
 // TODO: cache the emoticonCodes and emoticonCodes objects and share them with
-// the AYT converstion
+// the AYT conversion
 
 		utils.each(emoticons, function (key) {
 			if (options.emoticonsCompat) {
@@ -2135,7 +2135,7 @@ export default function SCEditor(el, options) {
 	 * @return {boolean}
 	 * @function
 	 * @name inSourceMode
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.inSourceMode = function () {
 		return dom.hasClass(editorContainer, 'sourceMode');
@@ -2147,7 +2147,7 @@ export default function SCEditor(el, options) {
 	 * @return boolean
 	 * @function
 	 * @name sourceMode
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	/**
 	 * Sets if the editor is in sourceMode
@@ -2156,7 +2156,7 @@ export default function SCEditor(el, options) {
 	 * @return {this}
 	 * @function
 	 * @name sourceMode^2
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.sourceMode = function (enable) {
 		var inSourceMode = base.inSourceMode();
@@ -2178,7 +2178,7 @@ export default function SCEditor(el, options) {
 	 * @function
 	 * @name toggleSourceMode
 	 * @since 1.4.0
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.toggleSourceMode = function () {
 		var isInSourceMode = base.inSourceMode();
@@ -2226,7 +2226,7 @@ export default function SCEditor(el, options) {
 
 	/**
 	 * Gets the selected text of the source editor
-	 * @return {String}
+	 * @return {string}
 	 * @private
 	 */
 	sourceEditorSelectedText = function () {
@@ -2280,11 +2280,11 @@ export default function SCEditor(el, options) {
 	/**
 	 * Executes a command on the WYSIWYG editor
 	 *
-	 * @param {String} command
+	 * @param {string} command
 	 * @param {String|Boolean} [param]
 	 * @function
 	 * @name execCommand
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.execCommand = function (command, param) {
 		var	executed    = false,
@@ -2377,7 +2377,7 @@ export default function SCEditor(el, options) {
 	 * @return {?Node}
 	 * @function
 	 * @name currentNode
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base.currentNode = function () {
 		return currentNode;
@@ -2392,7 +2392,7 @@ export default function SCEditor(el, options) {
 	 * @return {?Node}
 	 * @function
 	 * @name currentBlockNode
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.4
 	 */
 	base.currentBlockNode = function () {
@@ -2575,7 +2575,7 @@ export default function SCEditor(el, options) {
 	 * @return {string}
 	 * @function
 	 * @name _
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	base._ = function () {
 		var	undef,
@@ -2612,40 +2612,39 @@ export default function SCEditor(el, options) {
 	};
 
 	/**
-	 * <p>Binds a handler to the specified events</p>
+	 * Binds a handler to the specified events
 	 *
-	 * <p>This function only binds to a limited list of
-	 * supported events.<br />
+	 * This function only binds to a limited list of
+	 * supported events.
+	 *
 	 * The supported events are:
-	 * <ul>
-	 *   <li>keyup</li>
-	 *   <li>keydown</li>
-	 *   <li>Keypress</li>
-	 *   <li>blur</li>
-	 *   <li>focus</li>
-	 *   <li>nodechanged<br />
-	 *       When the current node containing the selection changes
-	 *       in WYSIWYG mode</li>
-	 *   <li>contextmenu</li>
-	 *   <li>selectionchanged</li>
-	 *   <li>valuechanged</li>
-	 * </ul>
-	 * </p>
 	 *
-	 * <p>The events param should be a string containing the event(s)
+	 * * keyup
+	 * * keydown
+	 * * Keypress
+	 * * blur
+	 * * focus
+	 * * nodechanged - When the current node containing
+	 * 		the selection changes in WYSIWYG mode
+	 * * contextmenu
+	 * * selectionchanged
+	 * * valuechanged
+	 *
+	 *
+	 * The events param should be a string containing the event(s)
 	 * to bind this handler to. If multiple, they should be separated
-	 * by spaces.</p>
+	 * by spaces.
 	 *
-	 * @param  {String} events
+	 * @param  {string} events
 	 * @param  {Function} handler
-	 * @param  {Boolean} excludeWysiwyg If to exclude adding this handler
+	 * @param  {boolean} excludeWysiwyg If to exclude adding this handler
 	 *                                  to the WYSIWYG editor
-	 * @param  {Boolean} excludeSource  if to exclude adding this handler
+	 * @param  {boolean} excludeSource  if to exclude adding this handler
 	 *                                  to the source editor
 	 * @return {this}
 	 * @function
 	 * @name bind
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.bind = function (events, handler, excludeWysiwyg, excludeSource) {
@@ -2683,16 +2682,16 @@ export default function SCEditor(el, options) {
 	/**
 	 * Unbinds an event that was bound using bind().
 	 *
-	 * @param  {String} events
+	 * @param  {string} events
 	 * @param  {Function} handler
-	 * @param  {Boolean} excludeWysiwyg If to exclude unbinding this
+	 * @param  {boolean} excludeWysiwyg If to exclude unbinding this
 	 *                                  handler from the WYSIWYG editor
-	 * @param  {Boolean} excludeSource  if to exclude unbinding this
+	 * @param  {boolean} excludeSource  if to exclude unbinding this
 	 *                                  handler from the source editor
 	 * @return {this}
 	 * @function
 	 * @name unbind
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.1
 	 * @see bind
 	 */
@@ -2725,21 +2724,21 @@ export default function SCEditor(el, options) {
 	 * @return {this}
 	 * @function
 	 * @name blur
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.3.6
 	 */
 	/**
 	 * Adds a handler to the editors blur event
 	 *
 	 * @param  {Function} handler
-	 * @param  {Boolean} excludeWysiwyg If to exclude adding this handler
+	 * @param  {boolean} excludeWysiwyg If to exclude adding this handler
 	 *                                  to the WYSIWYG editor
-	 * @param  {Boolean} excludeSource  if to exclude adding this handler
+	 * @param  {boolean} excludeSource  if to exclude adding this handler
 	 *                                  to the source editor
 	 * @return {this}
 	 * @function
 	 * @name blur^2
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.blur = function (handler, excludeWysiwyg, excludeSource) {
@@ -2760,20 +2759,20 @@ export default function SCEditor(el, options) {
 	 * @return {this}
 	 * @function
 	 * @name focus
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 */
 	/**
 	 * Adds an event handler to the focus event
 	 *
 	 * @param  {Function} handler
-	 * @param  {Boolean} excludeWysiwyg If to exclude adding this handler
+	 * @param  {boolean} excludeWysiwyg If to exclude adding this handler
 	 *                                  to the WYSIWYG editor
-	 * @param  {Boolean} excludeSource  if to exclude adding this handler
+	 * @param  {boolean} excludeSource  if to exclude adding this handler
 	 *                                  to the source editor
 	 * @return {this}
 	 * @function
 	 * @name focus^2
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.focus = function (handler, excludeWysiwyg, excludeSource) {
@@ -2833,14 +2832,14 @@ export default function SCEditor(el, options) {
 	 * Adds a handler to the key down event
 	 *
 	 * @param  {Function} handler
-	 * @param  {Boolean} excludeWysiwyg If to exclude adding this handler
+	 * @param  {boolean} excludeWysiwyg If to exclude adding this handler
 	 *                                  to the WYSIWYG editor
-	 * @param  {Boolean} excludeSource  If to exclude adding this handler
+	 * @param  {boolean} excludeSource  If to exclude adding this handler
 	 *                                  to the source editor
 	 * @return {this}
 	 * @function
 	 * @name keyDown
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.keyDown = function (handler, excludeWysiwyg, excludeSource) {
@@ -2851,14 +2850,14 @@ export default function SCEditor(el, options) {
 	 * Adds a handler to the key press event
 	 *
 	 * @param  {Function} handler
-	 * @param  {Boolean} excludeWysiwyg If to exclude adding this handler
+	 * @param  {boolean} excludeWysiwyg If to exclude adding this handler
 	 *                                  to the WYSIWYG editor
-	 * @param  {Boolean} excludeSource  If to exclude adding this handler
+	 * @param  {boolean} excludeSource  If to exclude adding this handler
 	 *                                  to the source editor
 	 * @return {this}
 	 * @function
 	 * @name keyPress
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.keyPress = function (handler, excludeWysiwyg, excludeSource) {
@@ -2870,14 +2869,14 @@ export default function SCEditor(el, options) {
 	 * Adds a handler to the key up event
 	 *
 	 * @param  {Function} handler
-	 * @param  {Boolean} excludeWysiwyg If to exclude adding this handler
+	 * @param  {boolean} excludeWysiwyg If to exclude adding this handler
 	 *                                  to the WYSIWYG editor
-	 * @param  {Boolean} excludeSource  If to exclude adding this handler
+	 * @param  {boolean} excludeSource  If to exclude adding this handler
 	 *                                  to the source editor
 	 * @return {this}
 	 * @function
 	 * @name keyUp
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.keyUp = function (handler, excludeWysiwyg, excludeSource) {
@@ -2885,16 +2884,16 @@ export default function SCEditor(el, options) {
 	};
 
 	/**
-	 * <p>Adds a handler to the node changed event.</p>
+	 * Adds a handler to the node changed event.
 	 *
-	 * <p>Happens whenever the node containing the selection/caret
-	 * changes in WYSIWYG mode.</p>
+	 * Happens whenever the node containing the selection/caret
+	 * changes in WYSIWYG mode.
 	 *
 	 * @param  {Function} handler
 	 * @return {this}
 	 * @function
 	 * @name nodeChanged
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.nodeChanged = function (handler) {
@@ -2902,15 +2901,15 @@ export default function SCEditor(el, options) {
 	};
 
 	/**
-	 * <p>Adds a handler to the selection changed event</p>
+	 * Adds a handler to the selection changed event
 	 *
-	 * <p>Happens whenever the selection changes in WYSIWYG mode.</p>
+	 * Happens whenever the selection changes in WYSIWYG mode.
 	 *
 	 * @param  {Function} handler
 	 * @return {this}
 	 * @function
 	 * @name selectionChanged
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.selectionChanged = function (handler) {
@@ -2918,24 +2917,24 @@ export default function SCEditor(el, options) {
 	};
 
 	/**
-	 * <p>Adds a handler to the value changed event</p>
+	 * Adds a handler to the value changed event
 	 *
-	 * <p>Happens whenever the current editor value changes.</p>
+	 * Happens whenever the current editor value changes.
 	 *
-	 * <p>Whenever anything is inserted, the value changed or
+	 * Whenever anything is inserted, the value changed or
 	 * 1.5 secs after text is typed. If a space is typed it will
 	 * cause the event to be triggered immediately instead of
-	 * after 1.5 seconds</p>
+	 * after 1.5 seconds
 	 *
 	 * @param  {Function} handler
-	 * @param  {Boolean} excludeWysiwyg If to exclude adding this handler
+	 * @param  {boolean} excludeWysiwyg If to exclude adding this handler
 	 *                                  to the WYSIWYG editor
-	 * @param  {Boolean} excludeSource  If to exclude adding this handler
+	 * @param  {boolean} excludeSource  If to exclude adding this handler
 	 *                                  to the source editor
 	 * @return {this}
 	 * @function
 	 * @name valueChanged
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.5
 	 */
 	base.valueChanged = function (handler, excludeWysiwyg, excludeSource) {
@@ -3088,7 +3087,7 @@ export default function SCEditor(el, options) {
 	 * @return {boolean}
 	 * @function
 	 * @name emoticons
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.2
 	 */
 	/**
@@ -3098,7 +3097,7 @@ export default function SCEditor(el, options) {
 	 * @return {this}
 	 * @function
 	 * @name emoticons^2
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.2
 	 */
 	base.emoticons = function (enable) {
@@ -3143,7 +3142,7 @@ export default function SCEditor(el, options) {
 	 * @return {string}
 	 * @function
 	 * @name css
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.3
 	 */
 	/**
@@ -3153,7 +3152,7 @@ export default function SCEditor(el, options) {
 	 * @return {this}
 	 * @function
 	 * @name css^2
-	 * @memberOf sceditor.prototype
+	 * @memberOf SCEditor.prototype
 	 * @since 1.4.3
 	 */
 	base.css = function (css) {
@@ -3320,7 +3319,7 @@ export default function SCEditor(el, options) {
 
 	/**
 	 * Adds a shortcut handler to the editor
-	 * @param  {String}          shortcut
+	 * @param  {string}          shortcut
 	 * @param  {String|Function} cmd
 	 * @return {sceditor}
 	 */
@@ -3342,7 +3341,7 @@ export default function SCEditor(el, options) {
 
 	/**
 	 * Removes a shortcut handler
-	 * @param  {String} shortcut
+	 * @param  {string} shortcut
 	 * @return {sceditor}
 	 */
 	base.removeShortcut = function (shortcut) {
@@ -3454,7 +3453,7 @@ export default function SCEditor(el, options) {
 	 * to prevent the range being saved twice.
 	 *
 	 * @since 1.4.5
-	 * @param {Boolean} saveRange If to call rangeHelper.saveRange().
+	 * @param {boolean} saveRange If to call rangeHelper.saveRange().
 	 * @private
 	 */
 	triggerValueChanged = function (saveRange) {
@@ -3585,7 +3584,7 @@ SCEditor.command =
 	/**
 	 * Gets a command
 	 *
-	 * @param {String} name
+	 * @param {string} name
 	 * @return {Object|null}
 	 * @since v1.3.5
 	 */
@@ -3610,7 +3609,7 @@ SCEditor.command =
 	 *     }
 	 * });
 	 *
-	 * @param {String} name
+	 * @param {string} name
 	 * @param {Object} cmd
 	 * @return {this|false} Returns false if name or cmd is false
 	 * @since v1.3.5
@@ -3634,7 +3633,7 @@ SCEditor.command =
 	/**
 	 * Removes a command
 	 *
-	 * @param {String} name
+	 * @param {string} name
 	 * @return {this}
 	 * @since v1.3.5
 	 */

@@ -1,22 +1,56 @@
+/**
+ * Check if the passed argument is the
+ * the passed type.
+ *
+ * @param {string} type
+ * @param {*} arg
+ * @returns {boolean}
+ */
 function isTypeof(type, arg) {
 	return typeof arg === type;
 }
+
+/**
+ * @type {function(*): boolean}
+ */
 export var isString = isTypeof.bind(null, 'string');
+
+/**
+ * @type {function(*): boolean}
+ */
 export var isUndefined = isTypeof.bind(null, 'undefined');
+
+/**
+ * @type {function(*): boolean}
+ */
 export var isFunction = isTypeof.bind(null, 'function');
+
+/**
+ * @type {function(*): boolean}
+ */
 export var isNumber = isTypeof.bind(null, 'number');
 
 
 /**
  * Returns true if an object has no keys
  *
- * @param obj {Object}
+ * @param {!Object} obj
  * @returns {boolean}
  */
 export function isEmptyObject(obj) {
 	return !Object.keys(obj).length;
 }
 
+/**
+ * Extends the first object with any extra objects passed
+ *
+ * If the first argument is boolean and set to true
+ * it will extend child arrays and objects recursively.
+ *
+ * @param {!Object|boolean} isDeep
+ * @param {...Object} target
+ * @return {Object}
+ */
 export function extend(isDeep, target) {
 	var isDeepSpecified = isDeep === !!isDeep;
 	var i  = isDeepSpecified ? 2 : 1;
@@ -53,9 +87,10 @@ export function extend(isDeep, target) {
 }
 
 /**
- * @param {Array} arr
+ * Removes an item from the passed array
+ *
+ * @param {!Array} arr
  * @param {*} item
- * @returns {void}
  */
 export function arrayRemove(arr, item) {
 	var i = arr.indexOf(item);
@@ -66,9 +101,10 @@ export function arrayRemove(arr, item) {
 }
 
 /**
- * @param {Object|Array} obj
- * @param {Function} fn
- * @returns {void}
+ * Iterates over an array or object
+ *
+ * @param {!Object|Array} obj
+ * @param {function(*, *)} fn
  */
 export function each(obj, fn) {
 	if (Array.isArray(obj) || 'length' in obj && isNumber(obj.length)) {

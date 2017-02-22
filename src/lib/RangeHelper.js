@@ -13,9 +13,9 @@ var IE_BR_FIX = IE_VER && IE_VER < 11;
  * at the specified offset.
  *
  * @param  {Node}  node
- * @param  {Number}  offset
- * @param  {Boolean} isLeft
- * @param  {Number}  length
+ * @param  {number}  offset
+ * @param  {boolean} isLeft
+ * @param  {number}  length
  * @return {Object}
  * @private
  */
@@ -70,6 +70,12 @@ var outerText = function (range, isLeft, length) {
 	};
 };
 
+/**
+ * Range helper
+ *
+ * @class RangeHelper
+ * @name RangeHelper
+ */
 export default function RangeHelper(win, d) {
 	var	_createMarker, _prepareInput,
 		doc          = d || win.contentDocument || win.document,
@@ -78,15 +84,15 @@ export default function RangeHelper(win, d) {
 		base         = this;
 
 	/**
-	 * <p>Inserts HTML into the current range replacing any selected
-	 * text.</p>
+	 * Inserts HTML into the current range replacing any selected
+	 * text.
 	 *
-	 * <p>If endHTML is specified the selected contents will be put between
+	 * If endHTML is specified the selected contents will be put between
 	 * html and endHTML. If there is nothing selected html and endHTML are
-	 * just concatenate together.</p>
+	 * just concatenate together.
 	 *
 	 * @param {string} html
-	 * @param {string} endHTML
+	 * @param {string} [endHTML]
 	 * @return False on fail
 	 * @function
 	 * @name insertHTML
@@ -121,8 +127,8 @@ export default function RangeHelper(win, d) {
 	 * markers to the last child.
 	 *
 	 * @param  {Node|string} node
-	 * @param  {Node|string} endNode
-	 * @param  {boolean} returnHtml
+	 * @param  {Node|string} [endNode]
+	 * @param  {boolean} [returnHtml]
 	 * @return {Node|string}
 	 * @private
 	 */
@@ -181,15 +187,17 @@ export default function RangeHelper(win, d) {
 	};
 
 	/**
-	 * <p>The same as insertHTML except with DOM nodes instead</p>
+	 * The same as insertHTML except with DOM nodes instead
 	 *
-	 * <p><strong>Warning:</strong> the nodes must belong to the
+	 * <strong>Warning:</strong> the nodes must belong to the
 	 * document they are being inserted into. Some browsers
-	 * will throw exceptions if they don't.</p>
+	 * will throw exceptions if they don't.
+	 *
+	 * Returns boollean false on fail
 	 *
 	 * @param {Node} node
 	 * @param {Node} endNode
-	 * @return False on fail
+	 * @return {false|undefined}
 	 * @function
 	 * @name insertNode
 	 * @memberOf RangeHelper.prototype
@@ -224,7 +232,7 @@ export default function RangeHelper(win, d) {
 	 * <p>IE <= 8 will return a TextRange, all other browsers
 	 * will return a Range object.</p>
 	 *
-	 * @return {Range|TextRange}
+	 * @return {Range}
 	 * @function
 	 * @name cloneSelected
 	 * @memberOf RangeHelper.prototype
@@ -243,7 +251,7 @@ export default function RangeHelper(win, d) {
 	 * <p>IE <= 8 will return a TextRange, all other browsers
 	 * will return a Range object.</p>
 	 *
-	 * @return {Range|TextRange}
+	 * @return {Range}
 	 * @function
 	 * @name selectedRange
 	 * @memberOf RangeHelper.prototype
@@ -345,25 +353,25 @@ export default function RangeHelper(win, d) {
 	 * Gets the first block level parent of the selected
 	 * contents of the range.
 	 *
-	 * @param {Node} n The element to get the first block level parent from
+	 * @param {Node} [n] The element to get the first block level parent from
 	 * @return {HTMLElement}
 	 * @function
 	 * @name getFirstBlockParent^2
 	 * @since 1.4.1
 	 * @memberOf RangeHelper.prototype
 	 */
-	base.getFirstBlockParent = function (n) {
-		var func = function (node) {
-			if (!dom.isInline(node, true)) {
-				return node;
+	base.getFirstBlockParent = function (node) {
+		var func = function (elm) {
+			if (!dom.isInline(elm, true)) {
+				return elm;
 			}
 
-			node = node ? node.parentNode : null;
+			elm = elm ? elm.parentNode : null;
 
-			return node ? func(node) : node;
+			return elm ? func(elm) : elm;
 		};
 
-		return func(n || base.parentNode());
+		return func(node || base.parentNode());
 	};
 
 	/**
@@ -395,7 +403,7 @@ export default function RangeHelper(win, d) {
 	 * Creates a marker node
 	 *
 	 * @param {string} id
-	 * @return {Node}
+	 * @return {HTMLSpanElement}
 	 * @private
 	 */
 	_createMarker = function (id) {
@@ -493,7 +501,7 @@ export default function RangeHelper(win, d) {
 	/**
 	 * Select the specified range
 	 *
-	 * @param {Range|TextRange} range
+	 * @param {Range} range
 	 * @function
 	 * @name selectRange
 	 * @memberOf RangeHelper.prototype
@@ -566,8 +574,8 @@ export default function RangeHelper(win, d) {
 	/**
 	 * Selects the text left and right of the current selection
 	 *
-	 * @param {int} left
-	 * @param {int} right
+	 * @param {number} left
+	 * @param {number} right
 	 * @since 1.4.3
 	 * @function
 	 * @name selectOuterText
@@ -597,6 +605,7 @@ export default function RangeHelper(win, d) {
 	 *
 	 * @param {boolean} before
 	 * @param {number} length
+	 * @return {string}
 	 * @since 1.4.3
 	 * @function
 	 * @name selectOuterText
@@ -725,6 +734,9 @@ export default function RangeHelper(win, d) {
 	 * @param  {Range} rngA
 	 * @param  {Range} [rngB]
 	 * @return {boolean}
+	 * @function
+	 * @name compare
+	 * @memberOf RangeHelper.prototype
 	 */
 	base.compare = function (rngA, rngB) {
 		if (!rngB) {
@@ -743,6 +755,9 @@ export default function RangeHelper(win, d) {
 	 * Removes any current selection
 	 *
 	 * @since 1.4.6
+	 * @function
+	 * @name clear
+	 * @memberOf RangeHelper.prototype
 	 */
 	base.clear = function () {
 		var sel = win.getSelection();
