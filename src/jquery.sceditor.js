@@ -18,6 +18,7 @@ import PluginManager from './lib/PluginManager.js';
 import * as escape from './lib/escape.js';
 import * as browser from './lib/browser.js';
 import * as dom from './lib/dom.js';
+import * as utils from './lib/utils.js';
 import RangeHelper from './lib/RangeHelper.js';
 import defaultCommands from './lib/defaultCommands.js';
 import defaultOptions from './lib/defaultOptions.js';
@@ -31,6 +32,10 @@ SCEditor.defaultOptions = defaultOptions;
 SCEditor.RangeHelper    = RangeHelper;
 // Legacy support, don't expose new methods
 SCEditor.dom            = {
+	css: dom.css,
+	attr: dom.attr,
+	removeAttr: dom.removeAttr,
+	is: dom.is,
 	traverse: dom.traverse,
 	rTraverse: dom.rTraverse,
 	parseHTML: dom.parseHTML,
@@ -48,6 +53,12 @@ SCEditor.dom            = {
 	getOffset: dom.getOffset,
 	getStyle: dom.getStyle,
 	hasStyle: dom.hasStyle
+};
+
+SCEditor.utils = {
+	each: utils.each,
+	isEmptyObject: utils.isEmptyObject,
+	extend: utils.extend
 };
 
 SCEditor.ie                 = browser.ie;
@@ -96,7 +107,7 @@ $.fn.sceditor = function (options) {
 
 	this.each(function () {
 		$this = this.jquery ? this : $(this);
-		instance = $this.data('sceditor');
+		instance = $this[0]._sceditor;
 
 		// Don't allow the editor to be initialised
 		// on it's own source editor
@@ -112,7 +123,6 @@ $.fn.sceditor = function (options) {
 		} else if (!instance) {
 			/*eslint no-new: off*/
 			(new SCEditor(this, options));
-			$this.data('sceditor', this._sceditor);
 		}
 	});
 

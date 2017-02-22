@@ -13,16 +13,11 @@ QUnit.module('jquery.sceditor', {
 		fixture.appendChild(textarea);
 
 		$(textarea).sceditor();
-		sceditor = $(textarea).data('sceditor');
+		sceditor = textarea._sceditor;
 	},
 	afterEach: function () {
 		$.sceditor.defaultOptions.emoticonsRoot = '';
 	}
-});
-
-
-QUnit.test('data(\'sceditor\')', function (assert) {
-	assert.ok($(textarea).data('sceditor') === sceditor);
 });
 
 QUnit.test('sceditor(\'instance\')', function (assert) {

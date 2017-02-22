@@ -228,7 +228,10 @@ export function css(node, rule, value) {
 			css(node, key, rule[key]);
 		});
 	} else {
-		node.style[rule] = utils.isNumber(value) ? value + 'px' : value;
+		// isNaN returns false for null, false and emmpty strings
+		// so need to check it's truthy or 0
+		var isNumeric = (value || value === 0) && !isNaN(value);
+		node.style[rule] = isNumeric ? value + 'px' : value;
 	}
 }
 
