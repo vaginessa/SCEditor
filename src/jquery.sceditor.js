@@ -36,6 +36,8 @@ SCEditor.dom            = {
 	attr: dom.attr,
 	removeAttr: dom.removeAttr,
 	is: dom.is,
+	width: dom.width,
+	height: dom.height,
 	traverse: dom.traverse,
 	rTraverse: dom.rTraverse,
 	parseHTML: dom.parseHTML,

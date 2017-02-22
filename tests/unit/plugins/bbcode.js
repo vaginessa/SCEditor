@@ -19,9 +19,7 @@ QUnit.module('plugins/bbcode', {
 		this.plugin.init.call(this.mockEditor);
 
 		this.htmlToBBCode = function (html) {
-			var $html = $(utils.htmlToDiv(html));
-
-			return this.plugin.signalToSource('', $html);
+			return this.plugin.signalToSource('', utils.htmlToDiv(html));
 		};
 	}
 });
@@ -32,12 +30,6 @@ QUnit.test('To BBCode method', function (assert) {
 		this.mockEditor.toBBCode(utils.htmlToDiv('<b>test</b>')),
 		'[b]test[/b]',
 		'DOM test'
-	);
-
-	assert.equal(
-		this.mockEditor.toBBCode($(utils.htmlToDiv('<b>test</b>'))),
-		'[b]test[/b]',
-		'jQuery DOM test'
 	);
 
 	assert.equal(
@@ -100,9 +92,7 @@ QUnit.test('HTML to BBCode trim', function (assert) {
 	this.plugin.init.call(this.mockEditor);
 
 	this.htmlToBBCode = function (html) {
-		var $html = $(utils.htmlToDiv(html));
-
-		return this.plugin.signalToSource('', $html);
+		return this.plugin.signalToSource('', utils.htmlToDiv(html));
 	};
 
 
@@ -132,9 +122,7 @@ QUnit.module('plugins/bbcode - HTML to BBCode', {
 		this.plugin.init.call(this.mockEditor);
 
 		this.htmlToBBCode = function (html) {
-			var $html = $(utils.htmlToDiv(html));
-
-			return this.plugin.signalToSource('', $html);
+			return this.plugin.signalToSource('', utils.htmlToDiv(html));
 		};
 	}
 });
@@ -688,7 +676,7 @@ QUnit.test('Image dimensions when loaded', function (assert) {
 		}
 
 		assert.equal(
-			plugin.signalToSource('', $(div)),
+			plugin.signalToSource('', div),
 			'[img=200x200]http://www.sceditor.com/emoticons/smile.png[/img]'
 		);
 
