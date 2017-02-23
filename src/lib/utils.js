@@ -64,13 +64,14 @@ export function extend(isDeep, target) {
 		/* eslint guard-for-in: off */
 		for (var key in source) {
 			var value = source[key];
+
 			// Skip undefined values to match jQuery and
-			// skip if prevent infinite loop
-			if (!isUndefined(value) && value !== target) {
+			// skip if target to prevent infinite loop
+			if (!isUndefined(value)) {
 				var isObject = value !== null && typeof value === 'object';
 				var isArray = Array.isArray(value);
 
-				if (isDeep && isObject || isArray) {
+				if (isDeep && (isObject || isArray)) {
 					target[key] = extend(
 						true,
 						target[key] || (isArray ? [] : {}),
