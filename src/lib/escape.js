@@ -14,7 +14,6 @@ var VALID_SCHEME_REGEX =
  *
  * @param {string} str
  * @return {string}
- * @name regex
  */
 export function regex(str) {
 	return str.replace(/([\-.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
@@ -27,9 +26,8 @@ export function regex(str) {
  * quotes will also be escaped
  *
  * @param {string} str
- * @param {boolean} [noQuotes=false]
+ * @param {boolean} [noQuotes=true]
  * @return {string}
- * @name entities
  * @since 1.4.1
  */
 export function entities(str, noQuotes) {
@@ -83,8 +81,6 @@ export function entities(str, noQuotes) {
  *
  * @param  {string} url
  * @return {string}
- * @name escapeUriScheme
- * @memberOf jQuery.sceditor
  * @since 1.4.5
  */
 export function uriScheme(url) {
