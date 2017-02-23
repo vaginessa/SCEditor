@@ -50,13 +50,13 @@ function toFloat(value) {
 export function createElement(tag, attributes, context) {
 	var node = (context || document).createElement(tag);
 
-	Object.keys(attributes || {}).forEach(function (key) {
+	utils.each(attributes || {}, function (key, value) {
 		if (key === 'style') {
-			node.style.cssText = attributes[key];
+			node.style.cssText = value;
 		} else if (key in node) {
-			node[key] = attributes[key];
+			node[key] = value;
 		} else {
-			node.setAttribute(key, attributes[key]);
+			node.setAttribute(key, value);
 		}
 	});
 
@@ -224,8 +224,8 @@ export function css(node, rule, value) {
 			return getComputedStyle(node)[rule];
 		}
 
-		Object.keys(rule).forEach(function (key) {
-			css(node, key, rule[key]);
+		utils.each(rule, function (key, value) {
+			css(node, key, value);
 		});
 	} else {
 		// isNaN returns false for null, false and emmpty strings
@@ -254,7 +254,7 @@ export function data(node, key, value) {
 
 	if (node.nodeType === ELEMENT_NODE) {
 		if (argsLength === 1) {
-			[].forEach.call(node.attributes, function (attr) {
+			utils.each(node.attributes, function (_, attr) {
 				if (/^data\-/i.test(attr.name)) {
 					data[attr.name.substr(5)] = attr.value;
 				}
@@ -710,9 +710,7 @@ export function fixNesting(node) {
 				insertBefore(li, node);
 			}
 
-			if (li) {
-				appendChild(li, node);
-			}
+			appendChild(li, node);
 		}
 	});
 }
