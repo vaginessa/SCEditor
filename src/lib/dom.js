@@ -380,7 +380,7 @@ export function removeClass(node, className) {
  * @param {boolean} [state]
  */
 export function toggleClass(node, className, state) {
-	state = utils.isUndefined(state) ? hasClass(node, className) : state;
+	state = utils.isUndefined(state) ? !hasClass(node, className) : state;
 
 	if (state) {
 		addClass(node, className);
@@ -433,7 +433,7 @@ export function height(node, value) {
  *
  * @param {HTMLElement} node
  * @param {string} eventName
- * @param {Object} [eventName]
+ * @param {Object} [data]
  */
 export function trigger(node, eventName, data) {
 	var event;
@@ -493,27 +493,22 @@ function camelCase(string) {
  */
 // eslint-disable-next-line max-params
 export function traverse(node, func, innermostFirst, siblingsOnly, reverse) {
-	if (node) {
-		node = reverse ? node.lastChild : node.firstChild;
+	node = reverse ? node.lastChild : node.firstChild;
 
-		while (node) {
-			var next = reverse ?
-				node.previousSibling :
-				node.nextSibling;
+	while (node) {
+		var next = reverse ? node.previousSibling : node.nextSibling;
 
-			if (
-				(!innermostFirst && func(node) === false) ||
-				(!siblingsOnly && traverse(
-					node, func, innermostFirst, siblingsOnly, reverse
-				) === false) ||
-				(innermostFirst && func(node) === false)
-			) {
-				return false;
-			}
-
-			// move to next child
-			node = next;
+		if (
+			(!innermostFirst && func(node) === false) ||
+			(!siblingsOnly && traverse(
+				node, func, innermostFirst, siblingsOnly, reverse
+			) === false) ||
+			(innermostFirst && func(node) === false)
+		) {
+			return false;
 		}
+
+		node = next;
 	}
 }
 
@@ -718,21 +713,15 @@ export function fixNesting(node) {
 /**
  * Finds the common parent of two nodes
  *
- * @param {HTMLElement} node1
- * @param {HTMLElement} node2
+ * @param {!HTMLElement} node1
+ * @param {!HTMLElement} node2
  * @return {?HTMLElement}
  */
 export function findCommonAncestor(node1, node2) {
-	// Not as fast as making two arrays of parents and comparing
-	// but is a lot smaller and as it's currently only used with
-	// fixing invalid nesting it doesn't need to be very fast
-	var node = node1.parentNode;
-	while (node) {
-		if (contains(node, node2)) {
-			return node;
+	while ((node1 = node1.parentNode)) {
+		if (contains(node1, node2)) {
+			return node1;
 		}
-
-		node = node.parentNode;
 	}
 }
 
@@ -918,10 +907,6 @@ export function getStyle(elm, property) {
 	var	direction, styleValue,
 		elmStyle = elm.style;
 
-	if (!elmStyle) {
-		return '';
-	}
-
 	if (!cssPropertyNameCache[property]) {
 		cssPropertyNameCache[property] = camelCase(property);
 	}
@@ -935,8 +920,7 @@ export function getStyle(elm, property) {
 		styleValue = styleValue || css(elm, property);
 
 		if (css(elm.parentNode, property) === styleValue ||
-			css(elm, 'display') !== 'block' ||
-			is(elm, 'hr,th')) {
+			css(elm, 'display') !== 'block' || is(elm, 'hr,th')) {
 			return '';
 		}
 

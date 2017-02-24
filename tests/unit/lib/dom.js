@@ -3,6 +3,184 @@ import * as utils from 'tests/unit/utils.js';
 
 QUnit.module('lib/dom');
 
+QUnit.test('data()', function (assert) {
+	var text = document.createTextNode('');
+	var div = document.createElement('div');
+	div.setAttribute('data-test', 'test');
+	div.setAttribute('data-another-test', 'test');
+	div.setAttribute('ignored', 'test');
+
+	assert.deepEqual(dom.data(div), {
+		'another-test': 'test',
+		'test': 'test'
+	});
+	assert.equal(dom.data(div, 'test'), 'test');
+	assert.equal(dom.data(div, 'another-test'), 'test');
+
+	dom.data(div, 'test', 'new-value');
+	assert.equal(dom.data(div, 'test'), 'new-value');
+
+	dom.data(div, 'test', 1);
+	assert.strictEqual(dom.data(div, 'test'), '1');
+
+	dom.data(text, 'test', 'test');
+	assert.strictEqual(dom.data(text, 'test'), undefined);
+});
+
+QUnit.test('is()', function (assert) {
+	var div = document.createElement('div');
+	div.className = 'test';
+
+	assert.ok(dom.is(div, 'div'));
+	assert.ok(dom.is(div, '.test'));
+	assert.notOk(dom.is(div, 'p'));
+	assert.notOk(dom.is(div, '.testing'));
+});
+
+QUnit.test('contains()', function (assert) {
+	var parent = document.createElement('div');
+	var child = document.createElement('div');
+
+	parent.appendChild(child);
+
+	assert.ok(dom.contains(parent, child));
+	assert.notOk(dom.contains(parent, parent));
+	assert.notOk(dom.contains(child, parent));
+});
+
+QUnit.test('insertBefore()', function (assert) {
+	var parent = document.createElement('div');
+	var first = document.createElement('div');
+	var last = document.createElement('div');
+
+	parent.appendChild(first);
+	parent.appendChild(last);
+
+	assert.strictEqual(dom.previousElementSibling(last), first);
+	assert.strictEqual(dom.previousElementSibling(last, 'div'), first);
+	assert.strictEqual(dom.previousElementSibling(last, 'p'), null);
+	assert.strictEqual(dom.previousElementSibling(first), null);
+});
+
+QUnit.test('insertBefore()', function (assert) {
+	var parent = document.createElement('div');
+	var ref = document.createElement('div');
+	var first = document.createElement('div');
+
+	parent.appendChild(ref);
+
+	dom.insertBefore(first, ref);
+
+	assert.strictEqual(parent.firstChild, first);
+});
+
+QUnit.test('hasClass()', function (assert) {
+	var div = document.createElement('div');
+
+	div.className = 'test';
+
+	assert.equal(dom.hasClass(div, 'another-test'), false);
+	assert.equal(dom.hasClass(div, 'test'), true);
+});
+
+QUnit.test('removeClass()', function (assert) {
+	var div = document.createElement('div');
+
+	div.className = 'test another-test';
+
+	dom.removeClass(div, 'another-test');
+	assert.equal(div.className.trim(), 'test');
+
+	dom.removeClass(div, 'test');
+	assert.equal(div.className.trim(), '');
+});
+
+QUnit.test('addClass()', function (assert) {
+	var div = document.createElement('div');
+
+	dom.addClass(div, 'test');
+	assert.equal(div.className.trim(), 'test');
+
+	dom.addClass(div, 'another-test');
+	assert.equal(div.className.trim(), 'test another-test');
+});
+
+QUnit.test('toggleClass()', function (assert) {
+	var div = document.createElement('div');
+
+	dom.toggleClass(div, 'test');
+	assert.equal(div.className.trim(), 'test', 'Add class');
+
+	dom.toggleClass(div, 'test');
+	assert.equal(div.className, '', 'Remove class');
+
+	dom.toggleClass(div, 'test', true);
+	dom.toggleClass(div, 'test', true);
+	assert.equal(div.className.trim(), 'test', 'Add class via state');
+
+	dom.toggleClass(div, 'test', false);
+	dom.toggleClass(div, 'test', false);
+	assert.equal(div.className, '', 'Remove class via state');
+});
+
+QUnit.test('width()', function (assert) {
+	var div = document.createElement('div');
+	var fixture = document.getElementById('qunit-fixture');
+
+	fixture.appendChild(div);
+
+	dom.width(div, 100);
+	assert.equal(div.style.width, '100px', 'Number width');
+
+	dom.width(div, '10em');
+	assert.equal(div.style.width, '10em', 'Em width');
+
+	dom.width(div, '100px');
+	assert.equal(dom.width(div), 100, 'Get width');
+});
+
+QUnit.test('height()', function (assert) {
+	var div = document.createElement('div');
+	var fixture = document.getElementById('qunit-fixture');
+
+	fixture.appendChild(div);
+
+	dom.height(div, 100);
+	assert.equal(div.style.height, '100px', 'Number height');
+
+	dom.height(div, '10em');
+	assert.equal(div.style.height, '10em', 'Em height');
+
+	dom.height(div, '100px');
+	assert.equal(dom.height(div), 100, 'Get height');
+});
+
+QUnit.test('trigger()', function (assert) {
+	var div = document.createElement('div');
+	var detail = {};
+
+	div.addEventListener('custom-event', function (e) {
+		assert.strictEqual(e.detail, detail);
+	});
+
+	dom.trigger(div, 'custom-event', detail);
+});
+
+QUnit.test('isVisible()', function (assert) {
+	var div = document.createElement('div');
+	var fixture = document.getElementById('qunit-fixture');
+
+	fixture.appendChild(div);
+	dom.hide(div);
+	assert.equal(dom.isVisible(div), false, 'Should be false when hidden');
+
+	dom.show(div);
+	assert.equal(dom.isVisible(div), true, 'Should be true when visible');
+
+	fixture.removeChild(div);
+	assert.equal(dom.isVisible(div), false, 'Deattached should be false');
+});
+
 QUnit.test('traverse()', function (assert) {
 	var result = '';
 	var node   = utils.htmlToDiv(
@@ -311,7 +489,7 @@ QUnit.test('removeWhiteSpace() - Preserve line breaks', function (assert) {
 	var node = utils.htmlToDiv(
 		'<div style="white-space: pre-line">    ' +
 			'<span>  \n\ncontent\n\n  </span>\n\n  ' +
-		'</div>'
+		'</div><div></div>'
 	);
 
 	dom.removeWhiteSpace(node);
@@ -320,8 +498,8 @@ QUnit.test('removeWhiteSpace() - Preserve line breaks', function (assert) {
 		node,
 		utils.htmlToDiv(
 			'<div style="white-space: pre-line">' +
-				'<span>\n\ncontent\n\n </span>\n\n ' +
-			'</div>'
+				'<span>\n\ncontent\n\n </span>\n\n' +
+			'</div><div></div>'
 		)
 	);
 });
