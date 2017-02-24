@@ -107,45 +107,95 @@ export function appendChild(node, child) {
 	node.appendChild(child);
 }
 
+/**
+ * Finds any child nodes that match teh selector
+ */
 export function find(node, selector) {
 	return node.querySelectorAll(selector);
 }
 
+/**
+ * For on() and off() if to add/remove the event
+ * to the capture phase
+ *
+ * @type {boolean}
+ */
 export var EVENT_CAPTURE = true;
+
+/**
+ * For on() and off() if to add/remove the event
+ * to the buibble phase
+ *
+ * @type {boolean}
+ */
 export var EVENT_BUBBLE = false;
 
+/**
+ * Adds an event listener for the specified events.
+ *
+ * Events should be a space seperated list of events.
+ *
+ * If selector is specified the handler will only be
+ * called when the event target matches the seector.
+ *
+ * @param {!Node} node
+ * @param {string} events
+ * @param {string} [selector]
+ * @param {function(Object)} fn
+ * @param {boolean} [capture=false]
+ * @see off()
+ */
 // eslint-disable-next-line max-params
 export function on(node, events, selector, fn, capture) {
-	if (utils.isString(selector)) {
-		var origFunc = fn;
-		var delegate = function (e) {
-			var target = e.target;
-// TODO: tidy up and add off support
-			while (target && target !== node) {
-				if (is(target, selector)) {
-					origFunc.call(target, e);
-					return;
-				}
-
-				target = target.parentNode;
-			}
-		};
-
-		fn._sceDelegate = delegate;
-		fn = delegate;
-	} else {
-		fn = selector;
-		capture = fn;
-	}
-
 	events.split(' ').forEach(function (event) {
-		node.addEventListener(event, fn, capture);
+		var handler;
+
+		if (utils.isString(selector)) {
+			handler = fn['_sce-event-' + event + selector] || function (e) {
+				var target = e.target;
+				while (target && target !== node) {
+					if (is(target, selector)) {
+						fn.call(target, e);
+						return;
+					}
+
+					target = target.parentNode;
+				}
+			};
+
+			fn['_sce-event-' + event + selector] = handler;
+		} else {
+			handler = selector;
+			capture = fn;
+		}
+
+		node.addEventListener(event, handler, capture || false);
 	});
 }
 
-export function off(node, events, fn, capture) {
+/**
+ * Removes an event listener for the specified events.
+ *
+ * @param {!Node} node
+ * @param {string} events
+ * @param {string} [selector]
+ * @param {function(Object)} fn
+ * @param {boolean} [capture=false]
+ * @see on()
+ */
+// eslint-disable-next-line max-params
+export function off(node, events, selector, fn, capture) {
 	events.split(' ').forEach(function (event) {
-		node.removeEventListener(event, fn, capture);
+		var handler;
+
+		if (utils.isString(selector)) {
+			handler = fn['_sce-event-' + event + selector];
+		} else {
+			handler = selector;
+			capture = fn;
+		}
+
+		node.removeEventListener(event, handler, capture || false);
 	});
 }
 
@@ -175,6 +225,8 @@ export function attr(node, attr, value) {
 }
 
 /**
+ * Removes the specified attribute
+ *
  * @param {!HTMLElement} node
  * @param {!string} attr
  */
@@ -361,7 +413,7 @@ export function insertBefore(node, refNode) {
  * @returns {!Array.<string>}
  */
 function classes(node) {
-	return node ? (node.className || '').trim().split(/\s+/) : [];
+	return node.className.trim().split(/\s+/);
 }
 
 /**
@@ -517,7 +569,7 @@ function camelCase(string) {
  * If the function returns false the loop will be exited.
  *
  * @param  {HTMLElement} node
- * @param  {Function} func           Callback which is called with every
+ * @param  {function} func           Callback which is called with every
  *                                   child node as the first argument.
  * @param  {boolean} innermostFirst  If the innermost node should be passed
  *                                   to the function before it's parents.

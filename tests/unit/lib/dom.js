@@ -1,7 +1,162 @@
 import * as dom from 'src/lib/dom.js';
 import * as utils from 'tests/unit/utils.js';
 
+var IS_PHANTOMJS = navigator.userAgent.indexOf('PhantomJS') > -1;
+
 QUnit.module('lib/dom');
+
+QUnit.test('on()', function (assert) {
+	var div = document.createElement('div');
+	var called = false;
+
+	dom.on(div, 'test', function () {
+		called = true;
+	});
+
+	dom.trigger(div, 'test');
+	assert.ok(called);
+});
+
+QUnit.test('on() - Selector', function (assert) {
+	// PhantomJS sets the wrong event.target for dispatch event
+	if (IS_PHANTOMJS) {
+		assert.expect(0);
+		return;
+	}
+
+	var div = document.createElement('div');
+	var p = document.createElement('p');
+	var called = false;
+
+	div.appendChild(p);
+
+	dom.on(div, 'test', 'p', function () {
+		called = true;
+	});
+
+	dom.trigger(div, 'test');
+	assert.notOk(called, 'Not matching selector');
+
+	dom.trigger(p, 'test');
+	assert.ok(called, 'Matching selector');
+});
+
+QUnit.test('off()', function (assert) {
+	var div = document.createElement('div');
+	var called = false;
+	var fn = function () {
+		called = true;
+	};
+
+	dom.on(div, 'test', fn);
+	dom.off(div, 'test', fn);
+
+	dom.trigger(div, 'test');
+	assert.notOk(called);
+});
+
+QUnit.test('off() - Selector', function (assert) {
+	var div = document.createElement('div');
+	var p = document.createElement('p');
+	var called = false;
+	var fn = function () {
+		called = true;
+	};
+
+	div.appendChild(p);
+
+	dom.on(div, 'test', 'p', fn);
+	dom.off(div, 'test', 'p', fn);
+
+	dom.trigger(div, 'test');
+	assert.notOk(called, 'Not matching selector');
+
+	dom.trigger(p, 'test');
+	assert.notOk(called, 'Matching selector');
+});
+
+QUnit.test('attr()', function (assert) {
+	var div = document.createElement('div');
+
+	dom.attr(div, 'test', 'value');
+	assert.ok(div.hasAttribute('test'), 'Add attribute');
+
+	assert.equal(dom.attr(div, 'test'), 'value', 'Get attribute');
+
+	dom.attr(div, 'test', 'new-value');
+	assert.equal(div.getAttribute('test'), 'new-value', 'Add attribute');
+
+	dom.attr(div, 'test', null);
+	assert.notOk(div.hasAttribute('test'), 'Remove attribute');
+});
+
+QUnit.test('removeAttr()', function (assert) {
+	var div = document.createElement('div');
+
+	div.setAttribute('test', 'test');
+
+	assert.ok(div.hasAttribute('test'));
+	dom.removeAttr(div, 'test');
+	assert.notOk(div.hasAttribute('test'));
+});
+
+QUnit.test('show()', function (assert) {
+	var div = document.createElement('div');
+
+	dom.hide(div);
+	assert.equal(div.style.display, 'none', 'Should hide node');
+});
+
+QUnit.test('show()', function (assert) {
+	var div = document.createElement('div');
+
+	div.style.display = 'none';
+
+	dom.show(div);
+	assert.equal(div.style.display, '', 'Should show node');
+});
+
+QUnit.test('toggle()', function (assert) {
+	var div = document.createElement('div');
+	var fixture = document.getElementById('qunit-fixture');
+
+	fixture.appendChild(div);
+
+	dom.toggle(div);
+	assert.equal(div.style.display, 'none', 'Should hide node');
+
+	dom.toggle(div);
+	assert.equal(div.style.display, '', 'Should show node');
+});
+
+QUnit.test('css()', function (assert) {
+	var div = document.createElement('div');
+	var fixture = document.getElementById('qunit-fixture');
+
+	fixture.appendChild(div);
+
+	dom.css(div, 'width', 100);
+	assert.equal(div.style.width, '100px', 'Convert numbers into pixels');
+
+	dom.css(div, { width: 32 });
+	assert.equal(div.style.width, '32px', 'Set object');
+
+	dom.css(div, 'width', '110px');
+	assert.equal(div.style.width, '110px', 'Set pixels');
+
+	dom.css(div, 'width', '10em');
+	assert.equal(div.style.width, '10em', 'Set em');
+
+	dom.css(div, 'width', '50%');
+	assert.equal(div.style.width, '50%', 'Set percent');
+
+	assert.close(
+		parseInt(dom.css(div, 'width')),
+		fixture.clientWidth / 2,
+		1,
+		'Get computed value'
+	);
+});
 
 QUnit.test('data()', function (assert) {
 	var text = document.createTextNode('');
@@ -33,6 +188,8 @@ QUnit.test('is()', function (assert) {
 
 	assert.ok(dom.is(div, 'div'));
 	assert.ok(dom.is(div, '.test'));
+	assert.notOk(dom.is());
+	assert.notOk(dom.is(null));
 	assert.notOk(dom.is(div, 'p'));
 	assert.notOk(dom.is(div, '.testing'));
 });
