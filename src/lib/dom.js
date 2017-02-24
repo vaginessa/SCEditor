@@ -1,4 +1,5 @@
 import * as utils from './utils.js';
+import { ie as IE_VER } from './browser.js';
 
 /**
  * Cache of camelCase CSS property names
@@ -213,6 +214,11 @@ export function toggle(node) {
 }
 
 /**
+ * Gets a computed CSS values or sets an inline CSS value
+ *
+ * Rules should be in camelCase format and not
+ * hyphenated like CSS properties.
+ *
  * @param {!HTMLElement} node
  * @param {!Object|string} rule
  * @param {string|number} [value]
@@ -279,9 +285,36 @@ export function data(node, key, value) {
  * @returns {boolean}
  */
 export function is(node, selector) {
-	return node && node.nodeType === ELEMENT_NODE &&
-		(node.matches || node.msMatchesSelector ||
+	var result = false;
+
+	if (node && node.nodeType === ELEMENT_NODE) {
+		var doc = node.ownerDocument;
+		var parent, nextSibling, isAppended;
+
+		// IE 9 fails on disconnected nodes so must
+		// add them to the body to test them
+		if (IE_VER < 10 && !node.document) {
+			isAppended = true;
+			parent = node.parentNode;
+			nextSibling = node.nextSibling;
+
+			appendChild(doc.body, node);
+		}
+
+		result = (node.matches || node.msMatchesSelector ||
 			node.webkitMatchesSelector).call(node, selector);
+
+		// Put node back where it came from after IE 9 fix
+		if (isAppended) {
+			remove(node);
+
+			if (parent) {
+				parent.insertBefore(node, nextSibling);
+			}
+		}
+	}
+
+	return result;
 }
 
 
@@ -291,12 +324,12 @@ export function is(node, selector) {
  * This differs from the DOM contains() method in that
  * if node and child are equal this will return false.
  *
- * @param {!HTMLElement} node
+ * @param {!Node} node
  * @param {HTMLElement} child
  * @returns {boolean}
  */
 export function contains(node, child) {
-	return node !== child && node.contains(child);
+	return node !== child && node.contains && node.contains(child);
 }
 
 /**
@@ -337,7 +370,7 @@ function classes(node) {
  * @returns {boolean}
  */
 export function hasClass(node, className) {
-	return classes(node).indexOf(className) > -1;
+	return is(node, '.' + className);
 }
 
 /**
@@ -438,14 +471,14 @@ export function height(node, value) {
 export function trigger(node, eventName, data) {
 	var event;
 
-	if (window.CustomEvent) {
+	if (utils.isFunction(window.CustomEvent)) {
 		event = new CustomEvent(eventName, {
 			bubbles: true,
 			cancelable: true,
 			detail: data
 		});
 	} else {
-		event = document.createEvent('CustomEvent');
+		event = node.ownerDocument.createEvent('CustomEvent');
 		event.initCustomEvent(eventName, true, true, data);
 	}
 
@@ -751,7 +784,7 @@ export function getSibling(node, previous) {
 export function removeWhiteSpace(root, preserveNewLines) {
 	var	nodeValue, nodeType, next, previous, previousSibling,
 		cssWhiteSpace, nextNode, trimStart,
-		node              = root.firstChild;
+		node = root.firstChild;
 
 	while (node) {
 		nextNode  = node.nextSibling;

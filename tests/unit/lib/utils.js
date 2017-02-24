@@ -27,18 +27,17 @@ QUnit.test('extend()', function (assert) {
 	}, {
 		key: child,
 		array: childArray,
-		prop: 'overriden'
+		prop: 'a'
 	});
 
 	assert.strictEqual(result, target);
 	assert.strictEqual(result.key, child);
 	assert.strictEqual(result.array, childArray);
-	assert.strictEqual(result.prop, 'overriden');
 
 	assert.deepEqual(result, {
 		key: child,
 		array: childArray,
-		prop: 'overriden',
+		prop: 'a',
 		extra: '@'
 	});
 });

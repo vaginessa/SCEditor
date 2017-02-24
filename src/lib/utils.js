@@ -47,20 +47,20 @@ export function isEmptyObject(obj) {
  * If the first argument is boolean and set to true
  * it will extend child arrays and objects recursively.
  *
- * @param {!Object|boolean} isDeep
- * @param {...Object} target
+ * @param {!Object|boolean} targetArg
+ * @param {...Object} source
  * @return {Object}
  */
-export function extend(isDeep, target) {
-	var isDeepSpecified = isDeep === !!isDeep;
-	var i  = isDeepSpecified ? 2 : 1;
-	target = isDeepSpecified ? target : isDeep;
-	isDeep = isDeepSpecified ? isDeep : false;
+export function extend(targetArg, sourceArg) {
+	var isTargetBoolean = targetArg === !!targetArg;
+	var i      = isTargetBoolean ? 2 : 1;
+	var target = isTargetBoolean ? sourceArg : targetArg;
+	var isDeep = isTargetBoolean ? targetArg : false;
 
 	for (; i < arguments.length; i++) {
-		var source = arguments[i] || {};
+		var source = arguments[i];
 
-		// jQuery compatibility
+		// Copy all properties for jQuery compatibility
 		/* eslint guard-for-in: off */
 		for (var key in source) {
 			var value = source[key];

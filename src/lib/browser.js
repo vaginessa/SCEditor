@@ -1,5 +1,3 @@
-import { createElement } from './dom.js';
-
 var USER_AGENT = navigator.userAgent;
 
 /**
@@ -19,7 +17,7 @@ export var ie = (function () {
 	var	undef,
 		v   = 3,
 		doc = document,
-		div = createElement('div'),
+		div = doc.createElement('div'),
 		all = div.getElementsByTagName('i');
 
 	do {
@@ -63,7 +61,8 @@ export var ios = /iPhone|iPod|iPad| wosbrowser\//i.test(USER_AGENT);
 export var isWysiwygSupported = (function () {
 	var	match, isUnsupported;
 
-	var div = createElement('div', { contentEditable: true });
+	var div = document.createElement('div');
+	div.contentEditable = true ;
 
 	// Check if the contentEditable attribute is supported
 	if (!('contentEditable' in document.documentElement) ||
