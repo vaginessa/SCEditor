@@ -1,4 +1,5 @@
 import SCEditor from 'src/lib/SCEditor.js';
+import PluginManager from 'src/lib/PluginManager.js';
 import defaultCommands from 'src/lib/defaultCommands.js';
 import defaultOptions from 'src/lib/defaultOptions.js';
 import * as browser from 'src/lib/browser.js';
@@ -53,7 +54,7 @@ QUnit.module('lib/SCEditor', {
 		SCEditor.commands       = defaultCommands;
 		SCEditor.defaultOptions = defaultOptions;
 
-		SCEditor.plugins.test = testPlugin;
+		PluginManager.plugins.test = testPlugin;
 
 		defaultOptions.style = '../../src/jquery.sceditor.default.css';
 		defaultOptions.emoticonsRoot    = '../../';
@@ -66,7 +67,7 @@ QUnit.module('lib/SCEditor', {
 		defaultOptions.emoticonsRoot    = '';
 		defaultOptions.emoticonsEnabled = true;
 
-		delete SCEditor.plugins.test;
+		delete PluginManager.plugins.test;
 
 		if (sceditor) {
 			sceditor.destroy();

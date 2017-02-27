@@ -141,13 +141,9 @@ var defaultCommnds = {
 		exec: function (caller) {
 			var editor = this;
 
-			defaultCommnds.font._dropDown(
-				editor,
-				caller,
-				function (fontName) {
-					editor.execCommand('fontname', fontName);
-				}
-			);
+			defaultCommnds.font._dropDown(editor, caller, function (fontName) {
+				editor.execCommand('fontname', fontName);
+			});
 		},
 		tooltip: 'Font Name'
 	},
@@ -174,13 +170,9 @@ var defaultCommnds = {
 		exec: function (caller) {
 			var editor = this;
 
-			defaultCommnds.size._dropDown(
-				editor,
-				caller,
-				function (fontSize) {
-					editor.execCommand('fontsize', fontSize);
-				}
-			);
+			defaultCommnds.size._dropDown(editor, caller, function (fontSize) {
+				editor.execCommand('fontsize', fontSize);
+			});
 		},
 		tooltip: 'Font Size'
 	},
@@ -222,13 +214,9 @@ var defaultCommnds = {
 		exec: function (caller) {
 			var editor = this;
 
-			defaultCommnds.color._dropDown(
-				editor,
-				caller,
-				function (color) {
-					editor.execCommand('forecolor', color);
-				}
-			);
+			defaultCommnds.color._dropDown(editor, caller, function (color) {
+				editor.execCommand('forecolor', color);
+			});
 		},
 		tooltip: 'Font Color'
 	},
@@ -651,11 +639,9 @@ var defaultCommnds = {
 						includeMore ? editor.opts.emoticons.more : {}
 					);
 
-				var emoticonKeys = Object.keys(emoticons);
-
 				dom.appendChild(content, line);
 
-				perLine = Math.sqrt(emoticonKeys.length);
+				perLine = Math.sqrt(Object.keys(emoticons).length);
 
 				dom.on(content, 'click', 'img', function (e) {
 					editor.insert(startSpace + dom.attr(this, 'alt') + endSpace,
@@ -664,9 +650,7 @@ var defaultCommnds = {
 					e.preventDefault();
 				});
 
-				emoticonKeys.forEach(function (code) {
-					var emoticon = emoticons[code];
-
+				utils.each(emoticons, function (code, emoticon) {
 					dom.appendChild(line, dom.createElement('img', {
 						src: emoticon.url || emoticon,
 						alt: code,
@@ -748,15 +732,9 @@ var defaultCommnds = {
 		exec: function (caller) {
 			var editor = this;
 
-			defaultCommnds.youtube._dropDown(
-				editor,
-				caller,
-				function (id) {
-					editor.wysiwygEditorInsertHtml(_tmpl('youtube', {
-						id: id
-					}));
-				}
-			);
+			defaultCommnds.youtube._dropDown(editor, caller, function (id) {
+				editor.wysiwygEditorInsertHtml(_tmpl('youtube', { id: id }));
+			});
 		},
 		tooltip: 'Insert a YouTube video'
 	},

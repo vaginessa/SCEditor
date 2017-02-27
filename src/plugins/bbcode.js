@@ -14,16 +14,15 @@
 /*eslint max-depth: off*/
 // TODO: Tidy this code up and consider seperating the BBCode parser into a
 // standalone module that can be used with other JS/NodeJS
-(function (document) {
+(function (sceditor, document) {
 	'use strict';
 
-	var SCEditor        = jQuery.sceditor;
-	var sceditorPlugins = SCEditor.plugins;
-	var escapeEntities  = SCEditor.escapeEntities;
-	var escapeUriScheme = SCEditor.escapeUriScheme;
+	var sceditorPlugins = sceditor.plugins;
+	var escapeEntities  = sceditor.escapeEntities;
+	var escapeUriScheme = sceditor.escapeUriScheme;
 
-	var dom             = SCEditor.dom;
-	var utils           = SCEditor.utils;
+	var dom             = sceditor.dom;
+	var utils           = sceditor.utils;
 
 	var css = dom.css;
 	var attr = dom.attr;
@@ -31,15 +30,17 @@
 	var extend = utils.extend;
 	var each = utils.each;
 
-	var IE_VER = SCEditor.ie;
+	var IE_VER = sceditor.ie;
 
 	// In IE < 11 a BR at the end of a block level element
 	// causes a double line break.
 	var IE_BR_FIX = IE_VER && IE_VER < 11;
 
+	var EMOTICON_DATA_ATTR = 'data-sceditor-emoticon';
 
 
-	var getEditorCommand = SCEditor.command.get;
+
+	var getEditorCommand = sceditor.command.get;
 
 	var defaultCommandsOverrides = {
 		bold: {
@@ -361,11 +362,6 @@
 	 * @since v1.4.0
 	 */
 	var BBCodeParser = function (options) {
-		// make sure this is not being called as a function
-		if (!(this instanceof BBCodeParser)) {
-			return new BBCodeParser(options);
-		}
-
 		var base = this;
 
 		// Private methods
@@ -543,8 +539,7 @@
 					)
 				)
 				*/
-				attrRegex =
-			/([^\s=]+)=(?:(?:(["'])((?:\\\2|[^\2])*?)\2)|((?:.(?!\s\S+=))*.))/g,
+				attrRegex = /([^\s=]+)=(?:(?:(["'])((?:\\\2|[^\2])*?)\2)|((?:.(?!\s\S+=))*.))/g,
 				ret       = {};
 
 			// if only one attribute then remove the = from the start and
@@ -1892,8 +1887,7 @@
 						isValidChild = vChildren.indexOf(tag) > -1;
 
 						// Emoticons should always be converted
-						if (is(node, 'img') &&
-							attr(node, 'data-sceditor-emoticon')) {
+						if (is(node, 'img') && attr(node, EMOTICON_DATA_ATTR)) {
 							isValidChild = true;
 						}
 
@@ -2013,7 +2007,7 @@
 				removeDiv(node, true);
 			}
 
-			if ((node = output.lastChild) && is(node, 'nodediv')) {
+			if ((node = output.lastChild) && is(node, 'div')) {
 				removeDiv(node);
 			}
 
@@ -2053,9 +2047,7 @@
 				return match;
 			}
 
-			return escape ?
-				escapeEntities(obj[group], true) :
-				obj[group];
+			return escape ? escapeEntities(obj[group], true) : obj[group];
 		});
 	};
 
@@ -2380,7 +2372,7 @@
 				}
 			},
 			format: function (element, content) {
-				return attr(element, 'data-sceditor-emoticon') + content;
+				return attr(element, EMOTICON_DATA_ATTR) + content;
 			},
 			html: '{0}'
 		},
@@ -2417,7 +2409,7 @@
 					};
 
 				// check if this is an emoticon image
-				if (attr(element, 'data-sceditor-emoticon')) {
+				if (attr(element, EMOTICON_DATA_ATTR)) {
 					return content;
 				}
 
@@ -2489,8 +2481,8 @@
 				attrs.defaultattr =
 					escapeEntities(attrs.defaultattr, true) || content;
 
-				return '<a href="' + escapeUriScheme(attrs.defaultattr) +
-					'">' + content + '</a>';
+				return '<a href="' + escapeUriScheme(attrs.defaultattr) + '">' +
+					content + '</a>';
 			}
 		},
 		// END_COMMAND
@@ -2774,5 +2766,5 @@
 	sceditorPlugins.bbcode.formatString    = _formatString;
 	sceditorPlugins.bbcode.stripQuotes     = _stripQuotes;
 	sceditorPlugins.bbcode.bbcodes         = bbcodes;
-	SCEditor.BBCodeParser                  = BBCodeParser;
-})(document);
+	sceditor.BBCodeParser                  = BBCodeParser;
+})(sceditor, document);

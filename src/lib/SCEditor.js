@@ -1,5 +1,7 @@
 ﻿import * as dom from './dom.js';
 import * as utils from './utils.js';
+import defaultOptions from './defaultOptions.js';
+import defaultCommands from './defaultCommands.js';
 import PluginManager from './PluginManager.js';
 import RangeHelper from './RangeHelper.js';
 import _tmpl from './templates.js';
@@ -331,7 +333,7 @@ export default function SCEditor(el, options) {
 	 * @memberOf SCEditor.prototype
 	 */
 	base.commands = utils
-		.extend(true, {}, (options.commands || SCEditor.commands));
+		.extend(true, {}, (options.commands || defaultCommands));
 
 	/**
 	 * Options for this editor instance
@@ -339,7 +341,7 @@ export default function SCEditor(el, options) {
 	 * @memberOf SCEditor.prototype
 	 */
 	base.opts = options = utils.extend(
-		true, {}, SCEditor.defaultOptions, options
+		true, {}, defaultOptions, options
 	);
 
 	/**
@@ -2206,14 +2208,14 @@ export default function SCEditor(el, options) {
 
 		// Fixes IE9 unspecified error. Not sure why it
 		// is being triggered but this fixes it.
-		if (!isInSourceMode) {
+		if (!isInSourceMode && IE_VER < 10) {
 			sourceEditor.focus();
 		}
 
 		dom.toggle(wysiwygEditor);
 
 		// Undo the previous IE 9 fix
-		if (!isInSourceMode) {
+		if (!isInSourceMode && IE_VER < 10) {
 			sourceEditor.blur();
 		}
 
@@ -3312,8 +3314,11 @@ export default function SCEditor(el, options) {
 		}
 
 		shortcut = shortcut.join('+');
-		if (shortcutHandlers[shortcut]) {
-			return shortcutHandlers[shortcut].call(base);
+		if (shortcutHandlers[shortcut] &&
+			shortcutHandlers[shortcut].call(base)) {
+
+			e.stopPropagation();
+			e.preventDefault();
 		}
 	};
 
@@ -3327,10 +3332,10 @@ export default function SCEditor(el, options) {
 		shortcut = shortcut.toLowerCase();
 
 		if (utils.isString(cmd)) {
-			shortcutHandlers[shortcut] = function (e) {
+			shortcutHandlers[shortcut] = function () {
 				handleCommand(toolbarButtons[cmd], base.commands[cmd]);
 
-				e.preventDefault();
+				return true;
 			};
 		} else {
 			shortcutHandlers[shortcut] = cmd;
@@ -3589,7 +3594,7 @@ SCEditor.command =
 	 * @since v1.3.5
 	 */
 	get: function (name) {
-		return SCEditor.commands[name] || null;
+		return defaultCommands[name] || null;
 	},
 
 	/**
@@ -3620,13 +3625,13 @@ SCEditor.command =
 		}
 
 		// merge any existing command properties
-		cmd = utils.extend(SCEditor.commands[name] || {}, cmd);
+		cmd = utils.extend(defaultCommands[name] || {}, cmd);
 
 		cmd.remove = function () {
 			SCEditor.command.remove(name);
 		};
 
-		SCEditor.commands[name] = cmd;
+		defaultCommands[name] = cmd;
 		return this;
 	},
 
@@ -3638,8 +3643,8 @@ SCEditor.command =
 	 * @since v1.3.5
 	 */
 	remove: function (name) {
-		if (SCEditor.commands[name]) {
-			delete SCEditor.commands[name];
+		if (defaultCommands[name]) {
+			delete defaultCommands[name];
 		}
 
 		return this;

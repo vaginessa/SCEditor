@@ -10,13 +10,12 @@
  * @author Sam Clarke
  */
 /*global prompt: true*/
-(function () {
+(function (sceditor) {
 	'use strict';
 
-	var SCEditor        = jQuery.sceditor;
-	var sceditorPlugins = SCEditor.plugins;
-	var dom             = SCEditor.dom;
-	var utils           = SCEditor.utils;
+	var sceditorPlugins = sceditor.plugins;
+	var dom             = sceditor.dom;
+	var utils           = sceditor.utils;
 
 	var css = dom.css;
 	var attr = dom.attr;
@@ -61,7 +60,7 @@
 			txtExec: function (caller) {
 				var editor = this;
 
-				SCEditor.command.get('font')._dropDown(
+				sceditor.command.get('font')._dropDown(
 					editor,
 					caller,
 					function (font) {
@@ -75,7 +74,7 @@
 			txtExec: function (caller) {
 				var editor = this;
 
-				SCEditor.command.get('size')._dropDown(
+				sceditor.command.get('size')._dropDown(
 					editor,
 					caller,
 					function (size) {
@@ -89,7 +88,7 @@
 			txtExec: function (caller) {
 				var editor = this;
 
-				SCEditor.command.get('color')._dropDown(
+				sceditor.command.get('color')._dropDown(
 					editor,
 					caller,
 					function (color) {
@@ -167,7 +166,7 @@
 			txtExec: function (caller) {
 				var editor = this;
 
-				SCEditor.command.get('youtube')._dropDown(
+				sceditor.command.get('youtube')._dropDown(
 					editor,
 					caller,
 					function (id) {
@@ -196,7 +195,7 @@
 	 * @name jQuery.sceditor.XHTMLSerializer
 	 * @since v1.4.1
 	 */
-	SCEditor.XHTMLSerializer = function () {
+	sceditor.XHTMLSerializer = function () {
 		var base = this;
 
 		var opts = {
@@ -572,7 +571,7 @@
 			removeAttribs(domBody);
 			wrapInlines(domBody);
 
-			return (new SCEditor.XHTMLSerializer()).serialize(domBody, true);
+			return (new sceditor.XHTMLSerializer()).serialize(domBody, true);
 		};
 
 		/**
@@ -1215,4 +1214,4 @@
 	 * @since v1.4.1
 	 */
 	sceditorPlugins.xhtml.disallowedTags = [];
-}());
+}(sceditor));
