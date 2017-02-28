@@ -48,6 +48,17 @@ function toFloat(value) {
 	return isFinite(value) ? value : 0;
 }
 
+/**
+ * Creates an element with the specified attributes
+ *
+ * Will create it in the current document unless context
+ * is specified.
+ *
+ * @param {!string} tag
+ * @param {!Object<string, string>} attributes
+ * @param {!Document} [context]
+ * @returns {!HTMLElement}
+ */
 export function createElement(tag, attributes, context) {
 	var node = (context || document).createElement(tag);
 
@@ -64,6 +75,13 @@ export function createElement(tag, attributes, context) {
 	return node;
 }
 
+/**
+ * Returns an array of parents that matches the selector
+ *
+ * @param {!HTMLElement} node
+ * @param {!string} [selector]
+ * @returns {Array<HTMLElement>}
+ */
 export function parents(node, selector) {
 	var parents = [];
 	var parent = node || {};
@@ -77,6 +95,13 @@ export function parents(node, selector) {
 	return parents;
 }
 
+/**
+ * Gets the first parent node that matches the selector
+ *
+ * @param {!HTMLElement} node
+ * @param {!string} [selector]
+ * @returns {HTMLElement|undefined}
+ */
 export function parent(node, selector) {
 	var parent = node || {};
 
@@ -91,24 +116,39 @@ export function parent(node, selector) {
  * Checks the passed node and all parents and
  * returns the first matching node if any.
  *
- * @param {HTMLElement} node
+ * @param {!HTMLElement} node
  * @param {!string} selector
- * @returns {HTMLElement|null}
+ * @returns {HTMLElement|undefined}
  */
 export function closest(node, selector) {
 	return is(node, selector) ? node : parent(node, selector);
 }
 
+/**
+ * Removes the node from the DOM
+ *
+ * @param {!HTMLElement} node
+ */
 export function remove(node) {
 	node.parentNode.removeChild(node);
 }
 
+/**
+ * Appends child to parent node
+ *
+ * @param {!HTMLElement} node
+ * @param {!HTMLElement} child
+ */
 export function appendChild(node, child) {
 	node.appendChild(child);
 }
 
 /**
  * Finds any child nodes that match teh selector
+ *
+ * @param {!HTMLElement} node
+ * @param {!string} selector
+ * @returns {NodeList}
  */
 export function find(node, selector) {
 	return node.querySelectorAll(selector);
