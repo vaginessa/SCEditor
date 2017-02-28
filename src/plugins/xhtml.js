@@ -1118,15 +1118,7 @@
 				}
 			},
 			conv: function (node) {
-				var	size     = css(node, 'fontSize'),
-					fontSize = size;
-
-				// IE < 8 sets a font tag with no size to +0 so
-				// should just skip it.
-				if (fontSize !== '+0') {
-					css(node, 'fontSize', fontSize);
-				}
-
+				css(node, 'fontSize', css(node, 'fontSize'));
 				removeAttr(node, 'size');
 			}
 		},
