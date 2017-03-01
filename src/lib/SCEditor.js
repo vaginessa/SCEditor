@@ -1204,7 +1204,7 @@ export default function SCEditor(el, options) {
 		maximize = !!maximize;
 
 		if (maximize) {
-			maximizeScrollPosiotion = globalWin.scrollTop;
+			maximizeScrollPosiotion = globalWin.pageYOffset;
 		}
 
 		dom.toggleClass(globalDoc.documentElement, maximizeSize, maximize);
@@ -1214,7 +1214,7 @@ export default function SCEditor(el, options) {
 		base.height(maximize ? '100%' : options.height, false);
 
 		if (!maximize) {
-			globalWin.scrollTop = maximizeScrollPosiotion;
+			globalWin.scrollTo(0, maximizeScrollPosiotion);
 		}
 
 		autoExpand();
