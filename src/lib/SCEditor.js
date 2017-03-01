@@ -3315,7 +3315,7 @@ export default function SCEditor(el, options) {
 
 		shortcut = shortcut.join('+');
 		if (shortcutHandlers[shortcut] &&
-			shortcutHandlers[shortcut].call(base)) {
+			shortcutHandlers[shortcut].call(base) === false) {
 
 			e.stopPropagation();
 			e.preventDefault();
@@ -3335,7 +3335,7 @@ export default function SCEditor(el, options) {
 			shortcutHandlers[shortcut] = function () {
 				handleCommand(toolbarButtons[cmd], base.commands[cmd]);
 
-				return true;
+				return false;
 			};
 		} else {
 			shortcutHandlers[shortcut] = cmd;
