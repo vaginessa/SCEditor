@@ -13,11 +13,13 @@
  */
 
 import $ from 'jquery';
-import './sceditor.js';
+import sceditor from './sceditor.js';
 
+
+export default sceditor;
 
 // For backwards compatibility
-$.sceditor = window.sceditor;
+$.sceditor = sceditor;
 
 /**
  * Creates an instance of sceditor on all textareas

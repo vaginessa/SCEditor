@@ -160,20 +160,42 @@ module.exports = (grunt) => {
 		rollup: {
 			options: {
 				format: 'iife',
-				external: ['jquery'],
+				moduleName: 'sceditor',
+				external: ['jquery', 'sceditor'],
 				globals: {
-					jquery: 'jQuery'
-				}
+					'jquery': 'jQuery',
+					'sceditor': 'sceditor'
+				},
+				plugins: [
+					{
+						resolveId: importee => {
+							// Replace ../sceditor.js import in plugins, icons
+							// and formats with the global sceditor variable
+							if (importee === '../sceditor.js') {
+								return 'sceditor';
+							}
+						}
+					}
+				]
 			},
 			build: {
-				files: {
-					'./minified/jquery.sceditor.min.js': [
-						'./src/jquery.sceditor.js'
-					],
-					'./minified/sceditor.min.js': [
-						'./src/sceditor.js'
-					]
-				}
+				files: [
+					{
+						dest: './minified/jquery.sceditor.min.js',
+						src: './src/jquery.sceditor.js'
+					},
+					{
+						dest: './minified/sceditor.min.js',
+						src: './src/sceditor.js'
+					},
+					{
+						expand: true,
+						filter: 'isFile',
+						cwd: 'src/',
+						src: ['plugins/**.js', 'formats/**.js', 'icons/**.js'],
+						dest: 'minified/'
+					}
+				]
 			},
 			dist: {
 				files: {
@@ -228,21 +250,21 @@ module.exports = (grunt) => {
 					{
 						src: [
 							'minified/jquery.sceditor.min.js',
-							'src/formats/bbcode.js'
+							'minified/formats/bbcode.js'
 						],
 						dest: 'minified/jquery.sceditor.bbcode.min.js'
 					},
 					{
 						src: [
 							'minified/jquery.sceditor.min.js',
-							'src/formats/xhtml.js'
+							'minified/formats/xhtml.js'
 						],
 						dest: 'minified/jquery.sceditor.xhtml.min.js'
 					},
 					{
 						expand: true,
 						filter: 'isFile',
-						cwd: 'src/',
+						cwd: 'minified/',
 						src: ['plugins/**.js', 'formats/**.js', 'icons/**.js'],
 						dest: 'minified/'
 					}

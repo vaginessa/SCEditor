@@ -7,91 +7,89 @@
  *
  * Should only be used to ease migrating.
  */
-(function (sceditor, $) {
-	'use strict';
+import sceditor from '../sceditor.js';
 
-	var plugins = sceditor.plugins;
+var plugins = sceditor.plugins;
 
-	/**
-	 * Patches a method to wrap and DOM nodes in a jQuery object
-	 * @private
-	 */
-	function patchMethodArguments(fn) {
-		if (fn._scePatched) {
-			return fn;
-		}
-
-		var patch = function () {
-			var args = [];
-
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-
-				if (arg && arg.nodeType) {
-					args.push($(arg));
-				} else {
-					args.push(arg);
-				}
-			}
-
-			return fn.apply(this, args);
-		};
-
-		patch._scePatched = true;
-		return patch;
+/**
+ * Patches a method to wrap and DOM nodes in a jQuery object
+ * @private
+ */
+function patchMethodArguments(fn) {
+	if (fn._scePatched) {
+		return fn;
 	}
 
-	/**
-	 * Patches a method to wrap any return value in a jQuery object
-	 * @private
-	 */
-	function patchMethodReturn(fn) {
-		if (fn._scePatched) {
-			return fn;
+	var patch = function () {
+		var args = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+
+			if (arg && arg.nodeType) {
+				args.push($(arg));
+			} else {
+				args.push(arg);
+			}
 		}
 
-		var patch = function () {
-			return $(fn.apply(this, arguments));
-		};
+		return fn.apply(this, args);
+	};
 
-		patch._scePatched = true;
-		return patch;
+	patch._scePatched = true;
+	return patch;
+}
+
+/**
+ * Patches a method to wrap any return value in a jQuery object
+ * @private
+ */
+function patchMethodReturn(fn) {
+	if (fn._scePatched) {
+		return fn;
 	}
 
-	var oldSet = sceditor.command.set;
-	sceditor.command.set = function (name, cmd) {
-		if (cmd && typeof cmd.exec === 'function') {
-			cmd.exec = patchMethodArguments(cmd.exec);
-		}
-
-		if (cmd && typeof cmd.txtExec === 'function') {
-			cmd.txtExec = patchMethodArguments(cmd.txtExec);
-		}
-
-		return oldSet.call(this, name, cmd);
+	var patch = function () {
+		return $(fn.apply(this, arguments));
 	};
 
-	if (plugins.bbcode) {
-		var oldBBCodeSet = plugins.bbcode.bbcode.set;
-		plugins.bbcode.bbcode.set = function (name, bbcode) {
-			if (bbcode && typeof bbcode.format === 'function') {
-				bbcode.format = patchMethodArguments(bbcode.format);
-			}
+	patch._scePatched = true;
+	return patch;
+}
 
-			return oldBBCodeSet.call(this, name, bbcode);
-		};
-	};
+var oldSet = sceditor.command.set;
+sceditor.command.set = function (name, cmd) {
+	if (cmd && typeof cmd.exec === 'function') {
+		cmd.exec = patchMethodArguments(cmd.exec);
+	}
 
-	var oldCreate = sceditor.create;
-	sceditor.create = function (textarea, options) {
-		oldCreate.call(this, textarea, options);
+	if (cmd && typeof cmd.txtExec === 'function') {
+		cmd.txtExec = patchMethodArguments(cmd.txtExec);
+	}
 
-		if (textarea && textarea._sceditor) {
-			var editor = textarea._sceditor;
+	return oldSet.call(this, name, cmd);
+};
 
-			editor.getBody = patchMethodReturn(editor.getBody);
-			editor.getContentAreaContainer =
-				patchMethodReturn(editor.getContentAreaContainer);
+if (plugins.bbcode) {
+	var oldBBCodeSet = plugins.bbcode.bbcode.set;
+	plugins.bbcode.bbcode.set = function (name, bbcode) {
+		if (bbcode && typeof bbcode.format === 'function') {
+			bbcode.format = patchMethodArguments(bbcode.format);
 		}
+
+		return oldBBCodeSet.call(this, name, bbcode);
 	};
-}(sceditor, jQuery));
+};
+
+var oldCreate = sceditor.create;
+sceditor.create = function (textarea, options) {
+	oldCreate.call(this, textarea, options);
+
+	if (textarea && textarea._sceditor) {
+		var editor = textarea._sceditor;
+
+		editor.getBody = patchMethodReturn(editor.getBody);
+		editor.getContentAreaContainer =
+			patchMethodReturn(editor.getContentAreaContainer);
+	}
+};

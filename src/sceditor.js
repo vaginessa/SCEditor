@@ -21,7 +21,7 @@ import defaultCommands from './lib/defaultCommands.js';
 import defaultOptions from './lib/defaultOptions.js';
 
 
-window.sceditor = {
+var sceditor = {
 	command: SCEditor.command,
 	commands: defaultCommands,
 	defaultOptions: defaultOptions,
@@ -87,3 +87,11 @@ window.sceditor = {
 		return textarea._sceditor;
 	}
 };
+
+// If running via webpack then define global SCEditor
+// eslint-disable-next-line
+if (typeof __webpack_require__ !== 'undefined') {
+	window.sceditor = sceditor;
+}
+
+export default sceditor;

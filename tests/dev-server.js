@@ -3,9 +3,17 @@
 const WebpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
 const path = require('path');
+const fs = require('fs');
 
-// TODO: make coverage optional and accept port
 exports.create = function (port, coverage) {
+	function addEntries(config, dir, entryDir) {
+		fs.readdirSync(dir).forEach(file => {
+			const name = file.replace(/\.js$/, '');
+
+			config.entry[path.join(entryDir, name)] = path.join(dir, file);
+		});
+	}
+
 	return new Promise(function (resolve, reject) {
 		const webpackOptions = {
 			entry: {
@@ -48,11 +56,16 @@ exports.create = function (port, coverage) {
 				}
 			},
 			externals: {
+				'../sceditor.js': 'sceditor',
 				jquery: 'jQuery',
 				rangy: 'rangy'
 			},
 			devtool: 'cheap-module-inline-source-map'
 		};
+
+		addEntries(webpackOptions, './src/formats/', 'formats/');
+		addEntries(webpackOptions, './src/plugins/', 'plugins/');
+		addEntries(webpackOptions, './src/icons/', 'icons/');
 
 		if (!coverage) {
 			webpackOptions.module = {};
